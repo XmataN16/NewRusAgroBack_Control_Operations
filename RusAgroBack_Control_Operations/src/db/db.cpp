@@ -53,11 +53,11 @@ void Database::disconnect()
     }
 }
 
-std::future<std::vector<InitialDataFrame>> Database::LoadInitialData() 
+std::future<InitialData> Database::LoadInitialData() 
 {
     return std::async(std::launch::async, [this]() 
         {
-        std::vector<InitialDataFrame> result;
+        InitialData initial_data;
 
         if (!conn_ || !conn_->is_open()) 
         {
@@ -71,7 +71,8 @@ std::future<std::vector<InitialDataFrame>> Database::LoadInitialData()
                 "SELECT id, culture, t_material, season, operation, "
                 "input_operation, deadline_input, region, "
                 "TO_CHAR(region_date, 'YYYY-MM-DD') AS region_date, "
-                "noinput_deadline, alternative_input, alternative_complete, ""\"order\", year "
+                "noinput_deadline, alternative_input, alternative_complete, "
+                "\"order\", year "
                 "FROM static_initial_data"
             );
 
@@ -79,6 +80,7 @@ std::future<std::vector<InitialDataFrame>> Database::LoadInitialData()
             {
                 InitialDataFrame data;
 
+                // Заполняем все поля структуры
                 row["id"].to(data.id);
                 row["culture"].to(data.culture);
                 row["t_material"].to(data.t_material);
@@ -158,7 +160,8 @@ std::future<std::vector<InitialDataFrame>> Database::LoadInitialData()
                 row["order"].to(data.order);
                 row["year"].to(data.year);
 
-                result.push_back(data);
+                // Добавляем заполненную структуру в InitialData
+                initial_data.AddFrame(data);
             }
         }
         catch (const std::exception& ex) 
@@ -167,6 +170,6 @@ std::future<std::vector<InitialDataFrame>> Database::LoadInitialData()
             throw;
         }
 
-        return result;
+        return initial_data;
         });
 }

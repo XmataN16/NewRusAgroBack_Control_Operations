@@ -1,6 +1,6 @@
 #pragma once
-
 #include <string>
+#include <vector>
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <optional>
 
@@ -20,4 +20,15 @@ struct InitialDataFrame
     std::optional<int> alternative_complete;
     int order;
     int year;
+};
+
+struct InitialData 
+{
+    std::vector<InitialDataFrame> frames;
+
+    // Метод для добавления нового элемента
+    void AddFrame(const InitialDataFrame& frame);
+
+    // Метод вывода данных
+    void Print() const;
 };

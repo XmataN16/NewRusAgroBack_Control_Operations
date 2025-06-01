@@ -1,5 +1,4 @@
 #pragma once
-
 #include <future>
 #include <string>
 #include <memory>
@@ -35,7 +34,7 @@ public:
     // явное закрытие соединени€
     void disconnect();
 
-    std::future<std::vector<InitialDataFrame>> LoadInitialData();
+    std::future<InitialData> LoadInitialData();
 
 private:
     std::unique_ptr<class pqxx::connection> conn_; // »спользуем forward declaration

@@ -1,40 +1,32 @@
 #include <iostream>
 #include <Windows.h>
-#include "db.hpp"  // Убедитесь, что путь к заголовкам указан верно
-#include "utilsBoostDate.hpp"
+#include "db.hpp"
+#include "InitialData.hpp"
 
 int main() 
 {
-    SetConsoleOutputCP(65001);  // Поддержка UTF-8 в консоли Windows
+    SetConsoleOutputCP(65001); // UTF-8 поддержка
 
     try 
     {
         Database db;
-        std::future<void> connect_future = db.connect();  // Асинхронное подключение
+        std::future<void> connect_future = db.connect();
 
         std::cout << "Connecting to the database asynchronously...\n";
-        connect_future.wait();  // Ждем завершения подключения
+        connect_future.wait();
 
         if (db.is_connected()) 
         {
             std::cout << "Successfully connected to the database!\n";
 
-            // Вызов асинхронного метода загрузки данных
-            std::future<std::vector<InitialDataFrame>> data_future = db.LoadInitialData();
+            // Загрузка данных в InitialData
+            std::future<InitialData> data_future = db.LoadInitialData();
 
             std::cout << "Loading data from the database...\n";
-            // Ждем завершения загрузки данных
-            std::vector<InitialDataFrame> data = data_future.get();
+            InitialData initial_data = data_future.get(); // Получаем объект
 
-            std::cout << "Loaded " << data.size() << " records:\n";
-            for (const auto& item : data) 
-            {
-                std::cout << "ID: " << item.id
-                    << ", Culture: " << item.culture
-                    << ", Region: " << item.region
-                    << ", Date: " << (item.region_date ? boost::gregorian::to_simple_string(*item.region_date) : "NULL")
-                    << ", Year: " << item.year << "\n";
-            }
+            std::cout << "Loaded " << initial_data.frames.size() << " records.\n";
+            initial_data.Print(); // Вызов метода вывода
         }
         else 
         {
