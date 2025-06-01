@@ -16,6 +16,15 @@
     <Filter Include="Исходные файлы\db">
       <UniqueIdentifier>{f035934b-a760-4b6c-a67c-85a50ad2f795}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\SapControlTech">
+      <UniqueIdentifier>{fe09b175-d202-479a-b7c2-aa7abf7763a9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\SapControlTech\DataStruct">
+      <UniqueIdentifier>{896c7202-7de1-4754-829a-bd0495b42f5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\utils">
+      <UniqueIdentifier>{eb6587d3-b4f1-4889-bd65-467b38776cf4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -24,10 +33,22 @@
     <ClCompile Include="src\db\db.cpp">
       <Filter>Исходные файлы\db</Filter>
     </ClCompile>
+    <ClCompile Include="src\SapControlTech\DataStruct\InitialData.cpp">
+      <Filter>Исходные файлы\SapControlTech\DataStruct</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils\utilsBoostDate.cpp">
+      <Filter>Исходные файлы\utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\db\db.hpp">
       <Filter>Исходные файлы\db</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SapControlTech\DataStruct\InitialData.hpp">
+      <Filter>Исходные файлы\SapControlTech\DataStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils\utilsBoostDate.hpp">
+      <Filter>Исходные файлы\utils</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

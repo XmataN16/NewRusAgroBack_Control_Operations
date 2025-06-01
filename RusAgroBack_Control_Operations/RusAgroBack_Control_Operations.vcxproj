@@ -105,7 +105,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp17</LanguageStandard>
-      <AdditionalIncludeDirectories>C:\Users\XmataN16\source\repos\RusAgroBack_Control_Operations\RusAgroBack_Control_Operations\src\db;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\XmataN16\source\repos\RusAgroBack_Control_Operations\RusAgroBack_Control_Operations\src\utils;C:\Users\XmataN16\source\repos\RusAgroBack_Control_Operations\RusAgroBack_Control_Operations\src\SapControlTech\DataStruct;C:\Users\XmataN16\source\repos\RusAgroBack_Control_Operations\RusAgroBack_Control_Operations\src\db;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,9 +131,13 @@
   <ItemGroup>
     <ClCompile Include="src\db\db.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\SapControlTech\DataStruct\InitialData.cpp" />
+    <ClCompile Include="src\utils\utilsBoostDate.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\db\db.hpp" />
+    <ClInclude Include="src\SapControlTech\DataStruct\InitialData.hpp" />
+    <ClInclude Include="src\utils\utilsBoostDate.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

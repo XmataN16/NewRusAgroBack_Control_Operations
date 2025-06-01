@@ -3,6 +3,10 @@
 #include <future>
 #include <string>
 #include <memory>
+#include <vector>
+
+#include "InitialData.hpp"
+#include "utilsBoostDate.hpp"
 
 // Forward declaration для уменьшения зависимости от libpqxx в заголовке
 namespace pqxx 
@@ -30,6 +34,8 @@ public:
 
     // Явное закрытие соединения
     void disconnect();
+
+    std::future<std::vector<InitialDataFrame>> LoadInitialData();
 
 private:
     std::unique_ptr<class pqxx::connection> conn_; // Используем forward declaration
