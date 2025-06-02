@@ -173,3 +173,102 @@ std::future<InitialData> Database::LoadInitialData()
         return initial_data;
         });
 }
+
+std::future<SapData> Database::LoadSapData()
+{
+    return std::async(std::launch::async, [this]()
+        {
+            SapData SapDataAll;
+
+            if (!conn_ || !conn_->is_open())
+            {
+                throw std::runtime_error("Database connection is not open.");
+            }
+
+            try
+            {
+                pqxx::work txn(*conn_);
+                pqxx::result res = txn.exec(
+                    "SELECT * FROM sap_control_operations ORDER BY id"
+                );
+
+                for (const auto& row : res)
+                {
+                    SapDataFrame data;
+
+                    // Заполняем все поля структуры
+                    row["id"].to(data.id);
+                    row["culture"].to(data.culture);
+                    row["nzp_zp"].to(data.nzp_zp);
+                    row["business_dir"].to(data.business_dir);
+                    row["higher_tm"].to(data.higher_tm);
+                    row["material_order"].to(data.material_order);
+                    row["planned_volume"].to(data.planned_volume);
+                    row["actual_volume"].to(data.actual_volume);
+                    row["pu"].to(data.pu);
+                    row["t_material"].to(data.t_material);
+                    row["year"].to(data.year);
+
+                    std::string calendar_day_str;
+                    row["calendar_day"].to(calendar_day_str);
+                    data.calendar_day = parse_date(calendar_day_str);
+
+                    // Добавляем заполненную структуру в InitialData
+                    SapDataAll.AddFrame(data);
+                }
+            }
+            catch (const std::exception& ex)
+            {
+                std::cerr << "Error fetching data: " << ex.what() << "\n";
+                throw;
+            }
+
+            return SapDataAll;
+        });
+}
+
+std::future<SapDataAggregated> Database::LoadSapDataAggregated()
+{
+    return std::async(std::launch::async, [this]()
+        {
+            SapDataAggregated SapDataAggregatedAll;
+
+            if (!conn_ || !conn_->is_open())
+            {
+                throw std::runtime_error("Database connection is not open.");
+            }
+
+            try
+            {
+                pqxx::work txn(*conn_);
+                pqxx::result res = txn.exec(
+                    "SELECT DISTINCT higher_tm, material_order, culture, business_dir, nzp_zp, pu, t_material, year FROM sap_control_operations"
+                );
+
+                for (const auto& row : res)
+                {
+                    SapDataAggregatedFrame data;
+
+                    // Заполняем все поля структуры
+                    row["culture"].to(data.culture);
+                    row["nzp_zp"].to(data.nzp_zp);
+                    row["business_dir"].to(data.business_dir);
+                    row["higher_tm"].to(data.higher_tm);
+                    row["material_order"].to(data.material_order);
+                    row["pu"].to(data.pu);
+                    row["t_material"].to(data.t_material);
+                    row["year"].to(data.year);
+
+                    // Добавляем заполненную структуру в InitialData
+                    SapDataAggregatedAll.AddFrame(data);
+                }
+            }
+            catch (const std::exception& ex)
+            {
+                std::cerr << "Error fetching data: " << ex.what() << "\n";
+                throw;
+            }
+
+            return SapDataAggregatedAll;
+        });
+}

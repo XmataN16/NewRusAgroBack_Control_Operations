@@ -5,6 +5,8 @@
 #include <vector>
 
 #include "InitialData.hpp"
+#include "SapData.hpp"
+#include "SapDataAggregated.hpp"
 #include "utilsBoostDate.hpp"
 
 // Forward declaration для уменьшения зависимости от libpqxx в заголовке
@@ -35,6 +37,10 @@ public:
     void disconnect();
 
     std::future<InitialData> LoadInitialData();
+
+    std::future<SapData> LoadSapData();
+
+    std::future<SapDataAggregated> LoadSapDataAggregated();
 
 private:
     std::unique_ptr<class pqxx::connection> conn_; // Используем forward declaration

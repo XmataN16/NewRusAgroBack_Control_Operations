@@ -135,6 +135,7 @@
     <ClCompile Include="src\SapControlTech\CalcMinimalPlannedDate.cpp" />
     <ClCompile Include="src\SapControlTech\DataStruct\InitialData.cpp" />
     <ClCompile Include="src\SapControlTech\DataStruct\SapData.cpp" />
+    <ClCompile Include="src\SapControlTech\DataStruct\SapDataAggregated.cpp" />
     <ClCompile Include="src\SapControlTech\SapControlTech.cpp" />
     <ClCompile Include="src\utils\utilsBoostDate.cpp" />
     <ClCompile Include="src\utils\utilsOptional.cpp" />
@@ -144,6 +145,7 @@
     <ClInclude Include="src\SapControlTech\CalcMinimalPlannedDate.hpp" />
     <ClInclude Include="src\SapControlTech\DataStruct\InitialData.hpp" />
     <ClInclude Include="src\SapControlTech\DataStruct\SapData.hpp" />
+    <ClInclude Include="src\SapControlTech\DataStruct\SapDataAggregated.hpp" />
     <ClInclude Include="src\SapControlTech\SapControlTech.hpp" />
     <ClInclude Include="src\utils\utilsBoostDate.hpp" />
     <ClInclude Include="src\utils\utilsOptional.hpp" />
