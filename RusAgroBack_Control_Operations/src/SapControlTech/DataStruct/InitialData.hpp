@@ -4,6 +4,14 @@
 #include <boost/date_time/gregorian/gregorian.hpp>
 #include <optional>
 
+struct PlannedDates
+{
+    std::optional<boost::gregorian::date> planned_date;
+    std::optional<boost::gregorian::date> input_date;
+    std::optional<boost::gregorian::date> alternative_date;
+    std::optional<boost::gregorian::date> minimal_planned_date;
+};
+
 struct InitialDataFrame 
 {
     int id;
@@ -20,6 +28,8 @@ struct InitialDataFrame
     std::optional<int> alternative_complete;
     int order;
     int year;
+
+    PlannedDates planned_dates;
 };
 
 struct InitialData 
@@ -31,4 +41,6 @@ struct InitialData
 
     // Метод вывода данных
     void Print() const;
+
+    int Size();
 };

@@ -45,6 +45,12 @@
     <ClCompile Include="src\utils\utilsOptional.cpp">
       <Filter>Исходные файлы\utils</Filter>
     </ClCompile>
+    <ClCompile Include="src\SapControlTech\SapControlTech.cpp">
+      <Filter>Исходные файлы\SapControlTech</Filter>
+    </ClCompile>
+    <ClCompile Include="src\SapControlTech\DataStruct\SapData.cpp">
+      <Filter>Исходные файлы\SapControlTech\DataStruct</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\db\db.hpp">
@@ -61,6 +67,12 @@
     </ClInclude>
     <ClInclude Include="src\utils\utilsOptional.hpp">
       <Filter>Исходные файлы\utils</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SapControlTech\SapControlTech.hpp">
+      <Filter>Исходные файлы\SapControlTech</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SapControlTech\DataStruct\SapData.hpp">
+      <Filter>Исходные файлы\SapControlTech\DataStruct</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
