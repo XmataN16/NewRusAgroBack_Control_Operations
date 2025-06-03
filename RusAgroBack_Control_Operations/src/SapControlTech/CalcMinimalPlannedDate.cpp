@@ -1,105 +1,123 @@
 #include "CalcMinimalPlannedDate.hpp"
 #include "utilsBoostDate.hpp"
 
-//Вычисление плановой даты завершения
-void CalcPlannedDate(InitialData& InitData, int frame)
+void CalcPlannedDate(InitialData& InitData, int row)
 {
-	if (InitData.frames[frame].noinput_deadline.has_value() && InitData.frames[frame].region_date.has_value())
+	if (InitData.data[row].noinput_deadline.has_value() && InitData.data[row].region_date.has_value())
 	{
-		InitData.frames[frame].planned_dates.planned_date = InitData.frames[frame].region_date.value() + boost::gregorian::days(InitData.frames[frame].noinput_deadline.value());
+		InitData.data[row].planned_dates.planned_date = InitData.data[row].region_date.value() + boost::gregorian::days(InitData.data[row].noinput_deadline.value());
 	}
 	else
 	{
-		InitData.frames[frame].planned_dates.planned_date = std::nullopt;
+		InitData.data[row].planned_dates.planned_date = std::nullopt;
 	}
+
 }
 
-//Вычисление вводной даты завершения
-void CalcInputDate(InitialData& InitData, int frame)
+void CalcInputDate(InitialData& InitData, int row)
 {
-	if (InitData.frames[frame].input_operation.has_value() && InitData.frames[frame].deadline_input.has_value())
+	if (InitData.data[row].input_operation_order.has_value() && InitData.data[row].input_deadline.has_value())
 	{
-		int input_operation_id = InitData.frames[frame].input_operation.value();
-		std::optional<boost::gregorian::date> InputDate;
-		if (InitData.frames[input_operation_id - 1].planned_dates.minimal_planned_date.has_value())
+		Key4 key
 		{
-			InputDate = InitData.frames[input_operation_id - 1].planned_dates.minimal_planned_date.value();
-		}
-		else
-		{
-			InputDate = std::nullopt;
-		}
+	       InitData.data[row].culture_id,
+	       InitData.data[row].region_id,
+		   InitData.data[row].input_operation_order.value(),
+	       InitData.data[row].year
+		};
 
-		std::optional<int> DeadlineInputDays = InitData.frames[frame].deadline_input.value();
-		if (DeadlineInputDays.has_value() && InputDate.has_value())
+		auto it = InitData.index_map.find(key);
+		if (it != InitData.index_map.end())
 		{
-			InitData.frames[frame].planned_dates.input_date = InputDate.value() + boost::gregorian::days(DeadlineInputDays.value());
+			int parent_row = it->second;
+			std::optional<boost::gregorian::date> InputDateTemp;
+			if (InitData.data[parent_row - 1].planned_dates.minimal_planned_date.has_value())
+			{
+				InputDateTemp = InitData.data[parent_row - 1].planned_dates.minimal_planned_date.value();
+			}
+			else
+			{
+				InputDateTemp = std::nullopt;
+			}
+			std::optional<int> DeadlineDays = InitData.data[row].input_deadline.value();
+			if (InputDateTemp.has_value() && DeadlineDays.has_value())
+			{
+				InitData.data[row].planned_dates.input_date = InputDateTemp.value() + boost::gregorian::days(DeadlineDays.value());
+			}
+			else
+			{
+				InitData.data[row].planned_dates.input_date = std::nullopt;
+			}
 		}
 		else
 		{
-			InitData.frames[frame].planned_dates.input_date = std::nullopt;
+			InitData.data[row].planned_dates.input_date = std::nullopt;
 		}
-	}
-	else
-	{
-		InitData.frames[frame].planned_dates.input_date = std::nullopt;
 	}
 }
 
-//Вычисление альтеранативной даты завершения
-void CalcAlternativeDate(InitialData& InitData, int frame)
+void CalcAlternativeDate(InitialData& InitData, int row)
 {
-	if (InitData.frames[frame].alternative_input.has_value() && InitData.frames[frame].alternative_complete.has_value())
+	if (InitData.data[row].alternative_operation_order.has_value() && InitData.data[row].alternative_deadline.has_value())
 	{
-		int AlternativeOperationId = InitData.frames[frame].alternative_input.value();
-		std::optional<boost::gregorian::date> AlternativeDate;
-		if (InitData.frames[AlternativeOperationId - 1].planned_dates.minimal_planned_date.has_value())
+		Key4 key
 		{
-			AlternativeDate = InitData.frames[AlternativeOperationId - 1].planned_dates.minimal_planned_date.value();
-		}
-		else
-		{
-			AlternativeDate = std::nullopt;
-		}
+		   InitData.data[row].culture_id,
+		   InitData.data[row].region_id,
+		   InitData.data[row].alternative_operation_order.value(),
+		   InitData.data[row].year
+		};
 
-		std::optional<int> AlternativeCompleteDays = InitData.frames[frame].alternative_complete.value();
-		if (AlternativeCompleteDays.has_value() && AlternativeDate.has_value())
+		auto it = InitData.index_map.find(key);
+		if (it != InitData.index_map.end())
 		{
-			InitData.frames[frame].planned_dates.alternative_date = AlternativeDate.value() + boost::gregorian::days(AlternativeCompleteDays.value());
+			int parent_row = it->second;
+			std::optional<boost::gregorian::date> AlternativeDateTemp;
+			if (InitData.data[parent_row - 1].planned_dates.minimal_planned_date.has_value())
+			{
+				AlternativeDateTemp = InitData.data[parent_row - 1].planned_dates.minimal_planned_date.value();
+			}
+			else
+			{
+				AlternativeDateTemp = std::nullopt;
+			}
+			std::optional<int> DeadlineDays = InitData.data[row].alternative_deadline.value();
+			if (AlternativeDateTemp.has_value() && DeadlineDays.has_value())
+			{
+				InitData.data[row].planned_dates.alternative_date = AlternativeDateTemp.value() + boost::gregorian::days(DeadlineDays.value());
+			}
+			else
+			{
+				InitData.data[row].planned_dates.alternative_date = std::nullopt;
+			}
 		}
 		else
 		{
-			InitData.frames[frame].planned_dates.alternative_date = std::nullopt;
+			InitData.data[row].planned_dates.alternative_date = std::nullopt;
 		}
-	}
-	else
-	{
-		InitData.frames[frame].planned_dates.alternative_date = std::nullopt;
 	}
 }
 
-//Вычисление кратчайших плановых дат
 void CalcMinimalPlannedDate(InitialData& InitData)
 {
-    #pragma omp parallel for
-	for (int frame = 0; frame < InitData.Size(); frame++)
+	for (int row = 0; row < InitData.Size(); row++)
 	{
-		CalcPlannedDate(InitData, frame);
-		CalcInputDate(InitData, frame);
-		CalcAlternativeDate(InitData, frame);
+		CalcPlannedDate(InitData, row);
+		CalcInputDate(InitData, row);
+		CalcAlternativeDate(InitData, row);
 
-		auto PlannedDate = InitData.frames[frame].planned_dates.planned_date;
-		auto InputDate = InitData.frames[frame].planned_dates.planned_date;
-		auto AlternativeDate = InitData.frames[frame].planned_dates.planned_date;
+		auto PlannedDate = InitData.data[row].planned_dates.planned_date;
+		auto InputDate = InitData.data[row].planned_dates.input_date;
+		auto AlternativeDate = InitData.data[row].planned_dates.alternative_date;
 
-		if (InitData.frames[frame].planned_dates.alternative_date.has_value())
+		if (InitData.data[row].planned_dates.alternative_date.has_value())
 		{
-			
-			InitData.frames[frame].planned_dates.minimal_planned_date = max_date(PlannedDate, InputDate, AlternativeDate);
+
+			InitData.data[row].planned_dates.minimal_planned_date = max_date(PlannedDate, InputDate, AlternativeDate);
 		}
 		else
 		{
-			InitData.frames[frame].planned_dates.minimal_planned_date = min_date(PlannedDate, InputDate, AlternativeDate);
+			InitData.data[row].planned_dates.minimal_planned_date = min_date(PlannedDate, InputDate, AlternativeDate);
 		}
 	}
 }

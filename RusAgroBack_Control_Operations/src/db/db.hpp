@@ -1,47 +1,35 @@
 #pragma once
-#include <future>
 #include <string>
 #include <memory>
-#include <vector>
-
-#include "InitialData.hpp"
-#include "SapData.hpp"
-#include "SapDataAggregated.hpp"
-#include "utilsBoostDate.hpp"
-
-// Forward declaration для уменьшения зависимости от libpqxx в заголовке
-namespace pqxx 
-{
-    class connection;
-}
+#include <pqxx/pqxx>
+#include <yaml-cpp/yaml.h>
 
 class Database 
 {
 public:
-    Database();
+    
+    explicit Database(const std::string& config_file);
+
+    
     ~Database();
 
-    // Асинхронный метод подключения к БД
-    std::future<void> connect(
-        const std::string& host = "localhost",
-        int port = 5432,
-        const std::string& dbname = "agro_system",
-        const std::string& user = "postgres",
-        const std::string& password = "1111"
-    );
+    
+    void connect();
 
-    // Проверка, установлено ли соединение
-    bool is_connected() const;
+    
+    pqxx::connection& getConnection();
 
-    // Явное закрытие соединения
-    void disconnect();
-
-    std::future<InitialData> LoadInitialData();
-
-    std::future<SapData> LoadSapData();
-
-    std::future<SapDataAggregated> LoadSapDataAggregated();
+    pqxx::result FetchInitialDataRaw();
 
 private:
-    std::unique_ptr<class pqxx::connection> conn_; // Используем forward declaration
+    std::string host_;
+    int         port_;
+    std::string user_;
+    std::string password_;
+    std::string dbname_;
+    std::string sslmode_;  // опционально
+
+    std::unique_ptr<pqxx::connection> conn_;
+
+    void loadConfig(const std::string& config_file);
 };

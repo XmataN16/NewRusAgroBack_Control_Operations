@@ -1,46 +1,77 @@
 #pragma once
-#include <string>
 #include <vector>
-#include <boost/date_time/gregorian/gregorian.hpp>
+#include <string>
+#include <unordered_map>
 #include <optional>
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <pqxx/pqxx>
 
-struct PlannedDates
+struct Key4
 {
-    std::optional<boost::gregorian::date> planned_date;
-    std::optional<boost::gregorian::date> input_date;
-    std::optional<boost::gregorian::date> alternative_date;
-    std::optional<boost::gregorian::date> minimal_planned_date;
-};
-
-struct InitialDataFrame 
-{
-    int id;
-    std::string culture;
-    std::string t_material;
-    std::string season;
-    std::string operation;
-    std::optional<int> input_operation;
-    std::optional<int> deadline_input;
-    std::string region;
-    std::optional<boost::gregorian::date> region_date;
-    std::optional<int> noinput_deadline;
-    std::optional<int> alternative_input;
-    std::optional<int> alternative_complete;
+    int culture_id;
+    int region_id;
     int order;
     int year;
 
-    PlannedDates planned_dates;
+    bool operator==(Key4 const& o) const
+    {
+        return culture_id == o.culture_id
+            && region_id == o.region_id
+            && order == o.order
+            && year == o.year;
+    }
 };
 
-struct InitialData 
+struct Key4Hash
 {
-    std::vector<InitialDataFrame> frames;
+    std::size_t operator()(Key4 const& key) const noexcept
+    {
+        std::size_t h1 = static_cast<std::size_t>(key.culture_id) * 73856093;
+        std::size_t h2 = static_cast<std::size_t>(key.region_id) * 83492791;
+        std::size_t h3 = static_cast<std::size_t>(key.order) * 19349663;
+        std::size_t h4 = static_cast<std::size_t>(key.year) * 49979693;
 
-    // Метод для добавления нового элемента
-    void AddFrame(const InitialDataFrame& frame);
+        return (h1 ^ h2 ^ h3 ^ h4);
+    }
+};
 
-    // Метод вывода данных
-    void Print() const;
+struct PlannedDates
+{
+	std::optional<boost::gregorian::date> planned_date;
+	std::optional<boost::gregorian::date> input_date;
+	std::optional<boost::gregorian::date> alternative_date;
+	std::optional<boost::gregorian::date> minimal_planned_date;
+};
 
-    int Size();
+struct InitialDataFrame
+{
+	int culture_id;
+	int t_material_id;
+	int region_id;
+	std::string season;
+	std::string tech_operation;
+	std::optional<boost::gregorian::date> region_date;
+	std::optional<int> input_operation_order;
+    std::optional<int> alternative_operation_order;
+	std::optional<int> input_deadline;
+	std::optional<int> alternative_deadline;
+	std::optional<int> noinput_deadline;
+	int order;
+	int year;
+
+    // calc struct
+	PlannedDates planned_dates;
+};
+
+struct InitialData
+{
+	std::vector<InitialDataFrame> data;
+
+	std::unordered_map<Key4, int, Key4Hash> index_map;
+
+	explicit InitialData(const pqxx::result& rows);
+
+	int Size();
+
+	void Print();
 };

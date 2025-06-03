@@ -1,274 +1,145 @@
 #include "db.hpp"
 
-// Теперь подключаем полный заголовок libpqxx, так как он нужен только в реализации
-#include <pqxx/pqxx>
-#include <iostream>
+#include <iostream>     
+#include <sstream>      
+#include <stdexcept>    
 
-Database::Database() = default;
+Database::Database(const std::string& config_file)
+    : port_(0)
+{
+    loadConfig(config_file);
+}
 
 Database::~Database() 
 {
-    disconnect();
-}
-
-std::future<void> Database::connect(const std::string& host, int port, const std::string& dbname, const std::string& user, const std::string& password) 
-{
-    return std::async(std::launch::async, [this, host, port, dbname, user, password]() 
-        {
-        try 
-        {
-            // Формируем строку подключения
-            std::string conn_str = "host=" + host + " port=" + std::to_string(port) + " dbname=" + dbname + " user=" + user + " password=" + password;
-
-            // Создаем новое соединение
-            conn_ = std::make_unique<pqxx::connection>(conn_str);
-
-            if (conn_->is_open()) 
-            {
-                std::cout << "Connection to database established successfully.\n";
-            }
-            else 
-            {
-                throw std::runtime_error("Failed to connect to the database.");
-            }
-        }
-        catch (const std::exception& ex) 
-        {
-            std::cerr << "Exception during connection: " << ex.what() << "\n";
-            throw; // Перебрасываем исключение в future
-        }
-        });
-}
-
-bool Database::is_connected() const 
-{
-    return conn_ && conn_->is_open();
-}
-
-void Database::disconnect() 
-{
     if (conn_ && conn_->is_open()) 
     {
-        conn_->close();
+        try 
+        {
+            // Закрываем соединение через close()
+            conn_->close();
+        }
+        catch (const std::exception& e) 
+        {
+            std::cerr << "[Database::~Database] Ошибка при закрытии соединения: "
+                << e.what() << std::endl;
+        }
     }
 }
 
-std::future<InitialData> Database::LoadInitialData() 
+void Database::loadConfig(const std::string& config_file) 
 {
-    return std::async(std::launch::async, [this]() 
-        {
-        InitialData initial_data;
+    try 
+    {
+        YAML::Node config = YAML::LoadFile(config_file);
 
-        if (!conn_ || !conn_->is_open()) 
+        // Проверяем обязательные поля
+        if (!config["host"] || !config["port"] || !config["user"] ||
+            !config["password"] || !config["dbname"])
         {
-            throw std::runtime_error("Database connection is not open.");
+            throw std::runtime_error("В файле конфигурации отсутствуют обязательные поля.");
         }
 
-        try 
+        host_ = config["host"].as<std::string>();
+        port_ = config["port"].as<int>();
+        user_ = config["user"].as<std::string>();
+        password_ = config["password"].as<std::string>();
+        dbname_ = config["dbname"].as<std::string>();
+
+        // Опциональное поле sslmode
+        if (config["sslmode"]) 
         {
-            pqxx::work txn(*conn_);
-            pqxx::result res = txn.exec(
-                "SELECT id, culture, t_material, season, operation, "
-                "input_operation, deadline_input, region, "
-                "TO_CHAR(region_date, 'YYYY-MM-DD') AS region_date, "
-                "noinput_deadline, alternative_input, alternative_complete, "
-                "\"order\", year "
-                "FROM static_initial_data"
-            );
-
-            for (const auto& row : res) 
-            {
-                InitialDataFrame data;
-
-                // Заполняем все поля структуры
-                row["id"].to(data.id);
-                row["culture"].to(data.culture);
-                row["t_material"].to(data.t_material);
-                row["season"].to(data.season);
-                row["operation"].to(data.operation);
-
-                // Обработка optional<int>
-                if (row["input_operation"].is_null()) 
-                {
-                    data.input_operation = std::nullopt;
-                }
-                else 
-                {
-                    int value;
-                    row["input_operation"].to(value);
-                    data.input_operation = value;
-                }
-
-                if (row["deadline_input"].is_null()) 
-                {
-                    data.deadline_input = std::nullopt;
-                }
-                else 
-                {
-                    int value;
-                    row["deadline_input"].to(value);
-                    data.deadline_input = value;
-                }
-
-                row["region"].to(data.region);
-
-                // Обработка optional<boost::gregorian::date>
-                if (row["region_date"].is_null()) 
-                {
-                    data.region_date = std::nullopt;
-                }
-                else 
-                {
-                    std::string date_str;
-                    row["region_date"].to(date_str);
-                    data.region_date = parse_date(date_str);
-                }
-
-                if (row["noinput_deadline"].is_null()) 
-                {
-                    data.noinput_deadline = std::nullopt;
-                }
-                else 
-                {
-                    int value;
-                    row["noinput_deadline"].to(value);
-                    data.noinput_deadline = value;
-                }
-
-                if (row["alternative_input"].is_null()) 
-                {
-                    data.alternative_input = std::nullopt;
-                }
-                else 
-                {
-                    int value;
-                    row["alternative_input"].to(value);
-                    data.alternative_input = value;
-                }
-
-                if (row["alternative_complete"].is_null()) 
-                {
-                    data.alternative_complete = std::nullopt;
-                }
-                else 
-                {
-                    int value;
-                    row["alternative_complete"].to(value);
-                    data.alternative_complete = value;
-                }
-
-                row["order"].to(data.order);
-                row["year"].to(data.year);
-
-                // Добавляем заполненную структуру в InitialData
-                initial_data.AddFrame(data);
-            }
+            sslmode_ = config["sslmode"].as<std::string>();
         }
-        catch (const std::exception& ex) 
+        else 
         {
-            std::cerr << "Error fetching data: " << ex.what() << "\n";
-            throw;
+            sslmode_.clear();
         }
 
-        return initial_data;
-        });
+    }
+    catch (const YAML::BadFile& e) 
+    {
+        throw std::runtime_error("Не удалось открыть YAML-файл: " + std::string(e.what()));
+    }
+    catch (const YAML::ParserException& e) 
+    {
+        throw std::runtime_error("Ошибка парсинга YAML-файла: " + std::string(e.what()));
+    }
+    // прочие исключения (например, отсутствует поле) просто пробрасываем
 }
 
-std::future<SapData> Database::LoadSapData()
+void Database::connect() 
 {
-    return std::async(std::launch::async, [this]()
+    if (conn_ && conn_->is_open()) 
+    {
+        // Уже подключены, ничего не делаем
+        return;
+    }
+
+    // Собираем строку подключения в формате libpq
+    std::ostringstream conn_str;
+    conn_str << "host=" << host_
+        << " port=" << port_
+        << " user=" << user_
+        << " password=" << password_
+        << " dbname=" << dbname_;
+    if (!sslmode_.empty()) 
+    {
+        conn_str << " sslmode=" << sslmode_;
+    }
+
+    try 
+    {
+        // Создаём соединение
+        conn_ = std::make_unique<pqxx::connection>(conn_str.str());
+
+        if (!conn_->is_open()) 
         {
-            SapData SapDataAll;
-
-            if (!conn_ || !conn_->is_open())
-            {
-                throw std::runtime_error("Database connection is not open.");
-            }
-
-            try
-            {
-                pqxx::work txn(*conn_);
-                pqxx::result res = txn.exec(
-                    "SELECT * FROM sap_control_operations ORDER BY id"
-                );
-
-                for (const auto& row : res)
-                {
-                    SapDataFrame data;
-
-                    // Заполняем все поля структуры
-                    row["id"].to(data.id);
-                    row["culture"].to(data.culture);
-                    row["nzp_zp"].to(data.nzp_zp);
-                    row["business_dir"].to(data.business_dir);
-                    row["higher_tm"].to(data.higher_tm);
-                    row["material_order"].to(data.material_order);
-                    row["planned_volume"].to(data.planned_volume);
-                    row["actual_volume"].to(data.actual_volume);
-                    row["pu"].to(data.pu);
-                    row["t_material"].to(data.t_material);
-                    row["year"].to(data.year);
-
-                    std::string calendar_day_str;
-                    row["calendar_day"].to(calendar_day_str);
-                    data.calendar_day = parse_date(calendar_day_str);
-
-                    // Добавляем заполненную структуру в InitialData
-                    SapDataAll.AddFrame(data);
-                }
-            }
-            catch (const std::exception& ex)
-            {
-                std::cerr << "Error fetching data: " << ex.what() << "\n";
-                throw;
-            }
-
-            return SapDataAll;
-        });
+            throw std::runtime_error("Не удалось открыть соединение с базой данных.");
+        }
+    }
+    catch (const pqxx::broken_connection& e) 
+    {
+        throw std::runtime_error("Ошибка соединения с PostgreSQL: " + std::string(e.what()));
+    }
+    catch (const std::exception& e) 
+    {
+        throw std::runtime_error("Ошибка при попытке connect(): " + std::string(e.what()));
+    }
 }
 
-std::future<SapDataAggregated> Database::LoadSapDataAggregated()
+pqxx::connection& Database::getConnection() 
 {
-    return std::async(std::launch::async, [this]()
-        {
-            SapDataAggregated SapDataAggregatedAll;
+    if (!conn_ || !conn_->is_open()) 
+    {
+        throw std::runtime_error("Соединение с БД не установлено. Вызовите connect() перед использованием.");
+    }
+    return *conn_;
+}
 
-            if (!conn_ || !conn_->is_open())
-            {
-                throw std::runtime_error("Database connection is not open.");
-            }
+pqxx::result Database::FetchInitialDataRaw()
+{
+    pqxx::work txn(*conn_);
 
-            try
-            {
-                pqxx::work txn(*conn_);
-                pqxx::result res = txn.exec(
-                    "SELECT DISTINCT higher_tm, material_order, culture, business_dir, nzp_zp, pu, t_material, year FROM sap_control_operations"
-                );
+    const std::string query = R"(
+        SELECT 
+            culture_id,
+            t_material_id,
+            region_id,
+            season,
+            tech_operation,
+            region_date,
+            input_operation_order,
+            alternative_operation_order,
+            input_deadline,
+            alternative_deadline,
+            noinput_deadline,
+            "order",
+            year
+        FROM static_initial_data
+    )";
 
-                for (const auto& row : res)
-                {
-                    SapDataAggregatedFrame data;
-
-                    // Заполняем все поля структуры
-                    row["culture"].to(data.culture);
-                    row["nzp_zp"].to(data.nzp_zp);
-                    row["business_dir"].to(data.business_dir);
-                    row["higher_tm"].to(data.higher_tm);
-                    row["material_order"].to(data.material_order);
-                    row["pu"].to(data.pu);
-                    row["t_material"].to(data.t_material);
-                    row["year"].to(data.year);
-
-                    // Добавляем заполненную структуру в InitialData
-                    SapDataAggregatedAll.AddFrame(data);
-                }
-            }
-            catch (const std::exception& ex)
-            {
-                std::cerr << "Error fetching data: " << ex.what() << "\n";
-                throw;
-            }
-
-            return SapDataAggregatedAll;
-        });
+    pqxx::result result = txn.exec(query);
+    txn.commit();
+    return result;
 }
