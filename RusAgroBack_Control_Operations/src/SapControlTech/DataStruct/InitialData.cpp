@@ -18,7 +18,6 @@ void InitialData::Print()
             std::cout << "t_material_id: " << row.t_material_id << std::endl;
             std::cout << "region_id: " << row.region_id << std::endl;
             std::cout << "season: " << row.season << std::endl;
-            std::cout << "tech_operation: " << row.tech_operation << std::endl;
             std::cout << "region_date: " << row.region_date << std::endl;
             std::cout << "input_operation_order: " << row.input_operation_order << std::endl;
             std::cout << "alternative_operation_order: " << row.alternative_operation_order << std::endl;
@@ -55,7 +54,6 @@ InitialData::InitialData(const pqxx::result& rows)
         frame.t_material_id = row["t_material_id"].as<int>();
         frame.region_id = row["region_id"].as<int>();
         frame.season = row["season"].as<std::string>();
-        frame.tech_operation = row["tech_operation"].as<std::string>();
 
         frame.region_date = row["region_date"].is_null()
             ? std::nullopt

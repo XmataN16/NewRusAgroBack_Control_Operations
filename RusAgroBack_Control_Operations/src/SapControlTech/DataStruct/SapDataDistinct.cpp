@@ -1,11 +1,12 @@
-#include "SapData.hpp"
+#include "SapDataDistinct.hpp"
+#include <iostream>
 
-int SapData::Size()
+int SapDataDistinct::Size()
 {
-    return data.size();
+	return data.size();
 }
 
-void SapData::Print()
+void SapDataDistinct::Print()
 {
     for (const auto& row : data)
     {
@@ -15,16 +16,13 @@ void SapData::Print()
         std::cout << "pu_id: " << row.pu_id << std::endl;
         std::cout << "higher_tm: " << row.higher_tm << std::endl;
         std::cout << "season: " << row.season << std::endl;
-        std::cout << "calendar_day: " << row.calendar_day << std::endl;
-        std::cout << "planned_volume: " << row.planned_volume << std::endl;
-        std::cout << "actual_volume: " << row.actual_volume << std::endl;
         std::cout << "year: " << row.year << std::endl;
 
         std::cout << "\n\n";
     }
 }
 
-SapData::SapData(const pqxx::result& rows)
+SapDataDistinct::SapDataDistinct(const pqxx::result& rows)
 {
     auto optInt = [](const pqxx::row& r, const char* col) -> std::optional<int>
         {
@@ -33,20 +31,18 @@ SapData::SapData(const pqxx::result& rows)
 
     for (const auto& row : rows)
     {
-        SapDataFrame frame;
+        SapDataDistinctFrame frame;
         frame.culture_id = row["culture_id"].as<int>();
         frame.region_id = row["region_id"].as<int>();
         frame.t_material_id = row["t_material_id"].as<int>();
         frame.pu_id = row["pu_id"].as<int>();
         frame.higher_tm = row["higher_tm"].as<std::string>();
         frame.season = row["season"].as<std::string>();
-        frame.calendar_day = boost::gregorian::from_simple_string(row["calendar_day"].as<std::string>());
-        frame.planned_volume = row["planned_volume"].as<int>();
-        frame.actual_volume = row["actual_volume"].as<int>();
         frame.year = row["year"].as<int>();
 
         data.push_back(std::move(frame));
     }
 }
+
 
 

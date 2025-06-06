@@ -49,7 +49,6 @@ struct InitialDataFrame
 	int t_material_id;
 	int region_id;
 	std::string season;
-	std::string tech_operation;
 	std::optional<boost::gregorian::date> region_date;
 	std::optional<int> input_operation_order;
     std::optional<int> alternative_operation_order;

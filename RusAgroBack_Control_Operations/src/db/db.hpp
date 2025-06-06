@@ -21,6 +21,10 @@ public:
 
     pqxx::result FetchInitialDataRaw();
 
+    pqxx::result FetchSapControlOperationsRaw();
+
+    pqxx::result FetchSapControlOperationsDistinctRaw();
+
 private:
     std::string host_;
     int         port_;

@@ -31,9 +31,9 @@ void CalcInputDate(InitialData& InitData, int row)
 		{
 			int parent_row = it->second;
 			std::optional<boost::gregorian::date> InputDateTemp;
-			if (InitData.data[parent_row - 1].planned_dates.minimal_planned_date.has_value())
+			if (InitData.data[parent_row].planned_dates.minimal_planned_date.has_value())
 			{
-				InputDateTemp = InitData.data[parent_row - 1].planned_dates.minimal_planned_date.value();
+				InputDateTemp = InitData.data[parent_row].planned_dates.minimal_planned_date.value();
 			}
 			else
 			{
@@ -73,9 +73,9 @@ void CalcAlternativeDate(InitialData& InitData, int row)
 		{
 			int parent_row = it->second;
 			std::optional<boost::gregorian::date> AlternativeDateTemp;
-			if (InitData.data[parent_row - 1].planned_dates.minimal_planned_date.has_value())
+			if (InitData.data[parent_row].planned_dates.minimal_planned_date.has_value())
 			{
-				AlternativeDateTemp = InitData.data[parent_row - 1].planned_dates.minimal_planned_date.value();
+				AlternativeDateTemp = InitData.data[parent_row].planned_dates.minimal_planned_date.value();
 			}
 			else
 			{

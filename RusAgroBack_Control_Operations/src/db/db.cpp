@@ -127,7 +127,6 @@ pqxx::result Database::FetchInitialDataRaw()
             t_material_id,
             region_id,
             season,
-            tech_operation,
             region_date,
             input_operation_order,
             alternative_operation_order,
@@ -136,7 +135,52 @@ pqxx::result Database::FetchInitialDataRaw()
             noinput_deadline,
             "order",
             year
-        FROM static_initial_data
+        FROM static_initial_data ORDER BY "order" ASC, culture_id ASC, region_id ASC
+    )";
+
+    pqxx::result result = txn.exec(query);
+    txn.commit();
+    return result;
+}
+
+pqxx::result Database::FetchSapControlOperationsRaw()
+{
+    pqxx::work txn(*conn_);
+
+    const std::string query = R"(
+        SELECT 
+            culture_id,
+            region_id,
+            t_material_id,
+            pu_id,
+            higher_tm,
+            season,
+            calendar_day,
+            planned_volume,
+            actual_volume,
+            year
+        FROM sap_control_operations
+    )";
+
+    pqxx::result result = txn.exec(query);
+    txn.commit();
+    return result;
+}
+
+pqxx::result Database::FetchSapControlOperationsDistinctRaw()
+{
+    pqxx::work txn(*conn_);
+
+    const std::string query = R"(
+        SELECT DISTINCT
+            culture_id,
+            region_id,
+            t_material_id,
+            pu_id,
+            higher_tm,
+            season,
+            year
+        FROM sap_control_operations
     )";
 
     pqxx::result result = txn.exec(query);

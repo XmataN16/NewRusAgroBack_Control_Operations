@@ -51,7 +51,7 @@
     <ClCompile Include="src\SapControlTech\DataStruct\SapData.cpp">
       <Filter>Исходные файлы\SapControlTech\DataStruct</Filter>
     </ClCompile>
-    <ClCompile Include="src\SapControlTech\DataStruct\SapDataAggregated.cpp">
+    <ClCompile Include="src\SapControlTech\DataStruct\SapDataDistinct.cpp">
       <Filter>Исходные файлы\SapControlTech\DataStruct</Filter>
     </ClCompile>
   </ItemGroup>
@@ -77,7 +77,7 @@
     <ClInclude Include="src\SapControlTech\DataStruct\SapData.hpp">
       <Filter>Исходные файлы\SapControlTech\DataStruct</Filter>
     </ClInclude>
-    <ClInclude Include="src\SapControlTech\DataStruct\SapDataAggregated.hpp">
+    <ClInclude Include="src\SapControlTech\DataStruct\SapDataDistinct.hpp">
       <Filter>Исходные файлы\SapControlTech\DataStruct</Filter>
     </ClInclude>
   </ItemGroup>
