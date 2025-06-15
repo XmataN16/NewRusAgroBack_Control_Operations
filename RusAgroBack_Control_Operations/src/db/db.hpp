@@ -25,6 +25,8 @@ public:
 
     pqxx::result FetchSapControlOperationsDistinctRaw();
 
+    pqxx::result FetchSapIDSReseedingRaw();
+
 private:
     std::string host_;
     int         port_;

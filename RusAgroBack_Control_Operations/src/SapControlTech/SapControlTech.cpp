@@ -2,7 +2,6 @@
 #include "db.hpp"
 #include "InitialData.hpp"
 #include "SapData.hpp"
-#include "SapDataDistinct.hpp"
 #include "CalcMinimalPlannedDate.hpp"
 
 int CalcSapControlAggregated()
@@ -14,27 +13,29 @@ int CalcSapControlAggregated()
 
         // Выгрузка данных
         pqxx::result rawInitData = db.FetchInitialDataRaw();
-        InitialData InitData(rawInitData);
+        InitialData initialData(rawInitData);
 
-        pqxx::result rawSapData = db.FetchSapControlOperationsRaw();
-        SapData SapDataAll(rawSapData);
+        pqxx::result rawSapDataAll = db.FetchSapControlOperationsRaw();
+        SapData sapDataAll(rawSapDataAll);
 
-        pqxx::result rawSapDataAggregated = db.FetchSapControlOperationsDistinctRaw();
-        SapDataDistinct SapDataAggregated(rawSapDataAggregated);
+        pqxx::result rawIDSReseeding = db.FetchSapIDSReseedingRaw();
+        IDSReseeding idsReseeding(rawIDSReseeding);
 
-        std::cout << "Загружено записей: " << InitData.Size() << std::endl;
+        CalcMinimalPlannedDate(initialData);
 
-        CalcMinimalPlannedDate(InitData);
+        // Разделение данных
+        YearSlices sapDataSlices = SliceSapData(sapDataAll.data, idsReseeding);
 
+        PrintSlicesForYearAndTm(sapDataSlices, 2024, "BL-04-03-16-0007");
 
+        //slices.at(2024).at("BL-04-03-16-0007").at()
 
-
-        InitData.Print();
+        //InitData.Print();
 
     }
     catch (const std::exception& e)
     {
-        std::cerr << "Ошибка: " << e.what() << std::endl;
+        std::cerr << u8"Ошибка: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
 

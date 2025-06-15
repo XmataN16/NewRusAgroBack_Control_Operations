@@ -24,7 +24,30 @@ struct SapData
 
 	explicit SapData(const pqxx::result& rows);
 
+	SapData() = default;
+
 	int Size();
 
 	void Print();
 };
+
+struct IDSReseeding
+{
+	std::vector<int> IDs;
+
+	explicit IDSReseeding(const pqxx::result& rows);
+
+	int Size();
+
+	void Print();
+};
+
+// Группированные срезы:
+// year -> higher_tm -> vector<vector<SapDataFrame>>
+using MaterialSlices = std::vector<std::vector<SapDataFrame>>;
+using HigherTmSlices = std::unordered_map<std::string, MaterialSlices>;
+using YearSlices = std::unordered_map<int, HigherTmSlices>;
+
+YearSlices SliceSapData(const std::vector<SapDataFrame>& data, const IDSReseeding& reseeding);
+
+void PrintSlicesForYearAndTm(const YearSlices& slices, int year, const std::string& higher_tm);
