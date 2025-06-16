@@ -117,7 +117,7 @@ pqxx::connection& Database::getConnection()
 	return *conn_;
 }
 
-pqxx::result Database::FetchInitialDataRaw()
+pqxx::result Database::fetchInitialDataRaw()
 {
 	pqxx::work txn(*conn_);
 
@@ -143,7 +143,7 @@ pqxx::result Database::FetchInitialDataRaw()
 	return result;
 }
 
-pqxx::result Database::FetchSapControlOperationsRaw()
+pqxx::result Database::fetchSapControlOperationsRaw()
 {
 	pqxx::work txn(*conn_);
 
@@ -167,44 +167,7 @@ pqxx::result Database::FetchSapControlOperationsRaw()
 	return result;
 }
 
-pqxx::result Database::FetchSapControlOperationsDistinctRaw()
-{
-	pqxx::work txn(*conn_);
-
-	const std::string query = R"(
-        WITH Ranked AS (
-    SELECT 
-        culture_id,
-		region_id,
-		t_material_id,
-        season,
-        higher_tm,
-        planned_volume,
-        calendar_day,
-        year,
-        ROW_NUMBER() OVER (
-            PARTITION BY culture_id, region_id, t_material_id, season, higher_tm 
-            ORDER BY planned_volume DESC, calendar_day ASC) AS rn
-    FROM sap_control_operations sco)
-    SELECT 
-        culture_id,
-	    region_id,
-	    t_material_id,
-        season,
-        higher_tm,
-        planned_volume AS max_planned_volume,
-        calendar_day,
-        year
-    FROM Ranked
-    WHERE rn = 1 ORDER BY calendar_day, higher_tm;
-    )";
-
-	pqxx::result result = txn.exec(query);
-	txn.commit();
-	return result;
-}
-
-pqxx::result Database::FetchSapIDSReseedingRaw()
+pqxx::result Database::fetchSapIDSReseedingRaw()
 {
 	pqxx::work txn(*conn_);
 

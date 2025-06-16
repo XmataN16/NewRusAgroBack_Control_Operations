@@ -48,6 +48,7 @@ using MaterialSlices = std::vector<std::vector<SapDataFrame>>;
 using HigherTmSlices = std::unordered_map<std::string, MaterialSlices>;
 using YearSlices = std::unordered_map<int, HigherTmSlices>;
 
-YearSlices SliceSapData(const std::vector<SapDataFrame>& data, const IDSReseeding& reseeding);
+YearSlices sliceSapData(const std::vector<SapDataFrame>& data, const IDSReseeding& reseeding);
+YearSlices makeUniqueTMaterialSlices(const YearSlices& originalSlices);
 
-void PrintSlicesForYearAndTm(const YearSlices& slices, int year, const std::string& higher_tm);
+void printSlicesForYearAndTm(const YearSlices& slices, int year, const std::string& higher_tm);

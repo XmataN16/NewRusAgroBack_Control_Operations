@@ -4,7 +4,7 @@
 #include "SapData.hpp"
 #include "CalcMinimalPlannedDate.hpp"
 
-int CalcSapControlAggregated()
+int calcSapControlAggregated()
 {
     try
     {
@@ -12,21 +12,24 @@ int CalcSapControlAggregated()
         db.connect();
 
         // Выгрузка данных
-        pqxx::result rawInitData = db.FetchInitialDataRaw();
+        pqxx::result rawInitData = db.fetchInitialDataRaw();
         InitialData initialData(rawInitData);
 
-        pqxx::result rawSapDataAll = db.FetchSapControlOperationsRaw();
+        pqxx::result rawSapDataAll = db.fetchSapControlOperationsRaw();
         SapData sapDataAll(rawSapDataAll);
 
-        pqxx::result rawIDSReseeding = db.FetchSapIDSReseedingRaw();
+        pqxx::result rawIDSReseeding = db.fetchSapIDSReseedingRaw();
         IDSReseeding idsReseeding(rawIDSReseeding);
 
-        CalcMinimalPlannedDate(initialData);
+        calcMinimalPlannedDate(initialData);
 
         // Разделение данных
-        YearSlices sapDataSlices = SliceSapData(sapDataAll.data, idsReseeding);
+        YearSlices sapDataSlices = sliceSapData(sapDataAll.data, idsReseeding);
 
-        PrintSlicesForYearAndTm(sapDataSlices, 2024, "BL-04-03-16-0007");
+        // Создаем структуру в которой каждый срез содержит только записи с уникальными t_material на основе первого вхождения (уже sort по calendar_day)
+        YearSlices sapDataUniqueTMaterialSlices = makeUniqueTMaterialSlices(sapDataSlices);
+
+        printSlicesForYearAndTm(sapDataUniqueTMaterialSlices, 2024, "BL-04-03-16-0007");
 
         //slices.at(2024).at("BL-04-03-16-0007").at()
 

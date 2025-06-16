@@ -1,7 +1,7 @@
 #include "CalcMinimalPlannedDate.hpp"
 #include "utilsBoostDate.hpp"
 
-void CalcPlannedDate(InitialData& InitData, int row)
+void calcPlannedDate(InitialData& InitData, int row)
 {
 	if (InitData.data[row].noinput_deadline.has_value() && InitData.data[row].region_date.has_value())
 	{
@@ -14,7 +14,7 @@ void CalcPlannedDate(InitialData& InitData, int row)
 
 }
 
-void CalcInputDate(InitialData& InitData, int row)
+void calcInputDate(InitialData& InitData, int row)
 {
 	if (InitData.data[row].input_operation_order.has_value() && InitData.data[row].input_deadline.has_value())
 	{
@@ -56,7 +56,7 @@ void CalcInputDate(InitialData& InitData, int row)
 	}
 }
 
-void CalcAlternativeDate(InitialData& InitData, int row)
+void calcAlternativeDate(InitialData& InitData, int row)
 {
 	if (InitData.data[row].alternative_operation_order.has_value() && InitData.data[row].alternative_deadline.has_value())
 	{
@@ -98,13 +98,13 @@ void CalcAlternativeDate(InitialData& InitData, int row)
 	}
 }
 
-void CalcMinimalPlannedDate(InitialData& InitData)
+void calcMinimalPlannedDate(InitialData& InitData)
 {
 	for (int row = 0; row < InitData.Size(); row++)
 	{
-		CalcPlannedDate(InitData, row);
-		CalcInputDate(InitData, row);
-		CalcAlternativeDate(InitData, row);
+		calcPlannedDate(InitData, row);
+		calcInputDate(InitData, row);
+		calcAlternativeDate(InitData, row);
 
 		auto PlannedDate = InitData.data[row].planned_dates.planned_date;
 		auto InputDate = InitData.data[row].planned_dates.input_date;

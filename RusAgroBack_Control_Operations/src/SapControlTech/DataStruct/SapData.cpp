@@ -1,4 +1,5 @@
 #include "SapData.hpp"
+#include <unordered_set>
 
 int SapData::Size()
 {
@@ -71,7 +72,7 @@ void IDSReseeding::Print()
 }
 
 // Разделение данных по year -> higher_tm -> куски по правилу t_material_id = 421 и planned_volume != 0
-YearSlices SliceSapData(const std::vector<SapDataFrame>& data, const IDSReseeding& reseeding)
+YearSlices sliceSapData(const std::vector<SapDataFrame>& data, const IDSReseeding& reseeding)
 {
     YearSlices result;
 
@@ -101,8 +102,43 @@ YearSlices SliceSapData(const std::vector<SapDataFrame>& data, const IDSReseedin
     return result;
 }
 
+// Метод формирует структуру YearSlices с уникальными t_material_id внутри каждого среза
+YearSlices makeUniqueTMaterialSlices(const YearSlices& originalSlices)
+{
+    YearSlices uniqueSlices;
+
+    for (const auto& [year, higherTmMap] : originalSlices)
+    {
+        for (const auto& [higher_tm, slices] : higherTmMap)
+        {
+            MaterialSlices& uniqueMaterialSlices = uniqueSlices[year][higher_tm];
+
+            for (const auto& slice : slices)
+            {
+                std::unordered_set<int> seen_t_material_ids;
+                std::vector<SapDataFrame> uniqueSlice;
+
+                for (const auto& frame : slice)
+                {
+                    if (seen_t_material_ids.insert(frame.t_material_id).second)
+                    {
+                        uniqueSlice.push_back(frame); // первая встречающаяся запись по t_material_id
+                    }
+                }
+
+                if (!uniqueSlice.empty())
+                {
+                    uniqueMaterialSlices.push_back(std::move(uniqueSlice));
+                }
+            }
+        }
+    }
+
+    return uniqueSlices;
+}
+
 // Вывод срезов данных по year -> higher_tm
-void PrintSlicesForYearAndTm(const YearSlices& slices, int year, const std::string& higher_tm)
+void printSlicesForYearAndTm(const YearSlices& slices, int year, const std::string& higher_tm)
 {
     auto yearIt = slices.find(year);
     if (yearIt == slices.end())

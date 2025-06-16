@@ -51,6 +51,9 @@
     <ClCompile Include="src\SapControlTech\DataStruct\SapData.cpp">
       <Filter>Исходные файлы\SapControlTech\DataStruct</Filter>
     </ClCompile>
+    <ClCompile Include="src\SapControlTech\CalcActualDate.cpp">
+      <Filter>Исходные файлы\SapControlTech</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\db\db.hpp">
@@ -73,6 +76,9 @@
     </ClInclude>
     <ClInclude Include="src\SapControlTech\DataStruct\SapData.hpp">
       <Filter>Исходные файлы\SapControlTech\DataStruct</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SapControlTech\CalcActualDate.hpp">
+      <Filter>Исходные файлы\SapControlTech</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

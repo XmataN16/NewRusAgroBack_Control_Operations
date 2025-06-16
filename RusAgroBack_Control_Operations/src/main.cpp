@@ -6,5 +6,5 @@ int main()
 {
     SetConsoleOutputCP(65001); // ¬ключить UTF-8 в консоли Windows
 
-    CalcSapControlAggregated();
+    calcSapControlAggregated();
 }

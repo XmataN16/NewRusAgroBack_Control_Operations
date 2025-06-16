@@ -19,13 +19,11 @@ public:
     
     pqxx::connection& getConnection();
 
-    pqxx::result FetchInitialDataRaw();
+    pqxx::result fetchInitialDataRaw();
 
-    pqxx::result FetchSapControlOperationsRaw();
+    pqxx::result fetchSapControlOperationsRaw();
 
-    pqxx::result FetchSapControlOperationsDistinctRaw();
-
-    pqxx::result FetchSapIDSReseedingRaw();
+    pqxx::result fetchSapIDSReseedingRaw();
 
 private:
     std::string host_;
