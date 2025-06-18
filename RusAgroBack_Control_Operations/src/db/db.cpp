@@ -159,7 +159,7 @@ pqxx::result Database::fetchSapControlOperationsRaw()
             planned_volume,
             actual_volume,
             year
-        FROM sap_control_operations ORDER BY calendar_day
+        FROM sap_control_operations ORDER BY calendar_day, id
     )";
 
 	pqxx::result result = txn.exec(query);

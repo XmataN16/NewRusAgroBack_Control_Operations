@@ -16,6 +16,9 @@ struct SapDataFrame
 	int planned_volume;
 	int actual_volume;
 	int year;
+
+	std::optional<boost::gregorian::date> actual_date;
+	bool is_completed;
 };
 
 struct SapData

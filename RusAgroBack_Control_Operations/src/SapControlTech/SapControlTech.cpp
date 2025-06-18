@@ -3,6 +3,7 @@
 #include "InitialData.hpp"
 #include "SapData.hpp"
 #include "CalcMinimalPlannedDate.hpp"
+#include "CalcActualDate.hpp"
 
 int calcSapControlAggregated()
 {
@@ -28,6 +29,8 @@ int calcSapControlAggregated()
 
         // Создаем структуру в которой каждый срез содержит только записи с уникальными t_material на основе первого вхождения (уже sort по calendar_day)
         YearSlices sapDataUniqueTMaterialSlices = makeUniqueTMaterialSlices(sapDataSlices);
+
+        CalcActualDate(sapDataUniqueTMaterialSlices, sapDataSlices);
 
         printSlicesForYearAndTm(sapDataUniqueTMaterialSlices, 2024, "BL-04-03-16-0007");
 

@@ -1,5 +1,8 @@
 #include "SapData.hpp"
+#include "utilsBoostDate.hpp"
+#include "utilsOptional.hpp"
 #include <unordered_set>
+
 
 int SapData::Size()
 {
@@ -162,8 +165,18 @@ void printSlicesForYearAndTm(const YearSlices& slices, int year, const std::stri
         std::cout << u8"  Срез #" << i << u8" (" << sliceList[i].size() << u8" записей):\n";
         for (const auto& frame : sliceList[i])
         {
-            std::cout << "    t_material_id: " << frame.t_material_id
-                << ", planned_volume: " << frame.planned_volume << "\n";
+            std::cout << "culture_id: " << frame.culture_id << std::endl;
+            std::cout << "region_id: " << frame.region_id << std::endl;
+            std::cout << "t_material_id: " << frame.t_material_id << std::endl;
+            std::cout << "pu_id: " << frame.pu_id << std::endl;
+            std::cout << "higher_tm: " << frame.higher_tm << std::endl;
+            std::cout << "season: " << frame.season << std::endl;
+            std::cout << "calendar_day: " << frame.calendar_day << std::endl;
+            std::cout << "year: " << frame.year << std::endl;
+            std::cout << "actual_date: " << frame.actual_date << std::endl;
+            std::cout << "is_completed: " << frame.is_completed << std::endl;
+
+            std::cout << "\n\n";
         }
     }
 }
