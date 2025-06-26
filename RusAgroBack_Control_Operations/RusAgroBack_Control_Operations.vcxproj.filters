@@ -54,6 +54,9 @@
     <ClCompile Include="src\SapControlTech\CalcActualDate.cpp">
       <Filter>Исходные файлы\SapControlTech</Filter>
     </ClCompile>
+    <ClCompile Include="src\SapControlTech\CalcActualDateCompleteEntryOperation.cpp">
+      <Filter>Исходные файлы\SapControlTech</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\db\db.hpp">
@@ -78,6 +81,9 @@
       <Filter>Исходные файлы\SapControlTech\DataStruct</Filter>
     </ClInclude>
     <ClInclude Include="src\SapControlTech\CalcActualDate.hpp">
+      <Filter>Исходные файлы\SapControlTech</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SapControlTech\CalcActualDateCompleteEntryOperation.hpp">
       <Filter>Исходные файлы\SapControlTech</Filter>
     </ClInclude>
   </ItemGroup>

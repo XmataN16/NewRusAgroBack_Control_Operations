@@ -133,6 +133,7 @@
     <ClCompile Include="src\db\db.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SapControlTech\CalcActualDate.cpp" />
+    <ClCompile Include="src\SapControlTech\CalcActualDateCompleteEntryOperation.cpp" />
     <ClCompile Include="src\SapControlTech\CalcMinimalPlannedDate.cpp" />
     <ClCompile Include="src\SapControlTech\DataStruct\InitialData.cpp" />
     <ClCompile Include="src\SapControlTech\DataStruct\SapData.cpp" />
@@ -143,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="src\db\db.hpp" />
     <ClInclude Include="src\SapControlTech\CalcActualDate.hpp" />
+    <ClInclude Include="src\SapControlTech\CalcActualDateCompleteEntryOperation.hpp" />
     <ClInclude Include="src\SapControlTech\CalcMinimalPlannedDate.hpp" />
     <ClInclude Include="src\SapControlTech\DataStruct\InitialData.hpp" />
     <ClInclude Include="src\SapControlTech\DataStruct\SapData.hpp" />

@@ -17,8 +17,11 @@ struct SapDataFrame
 	int actual_volume;
 	int year;
 
+	// calc fields
 	std::optional<boost::gregorian::date> actual_date;
 	bool is_completed;
+	std::optional<boost::gregorian::date> actual_input_date;
+	std::optional<boost::gregorian::date> actual_alternative_date;
 };
 
 struct SapData

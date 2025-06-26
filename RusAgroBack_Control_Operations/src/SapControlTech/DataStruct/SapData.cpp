@@ -176,6 +176,9 @@ void printSlicesForYearAndTm(const YearSlices& slices, int year, const std::stri
             std::cout << "actual_date: " << frame.actual_date << std::endl;
             std::cout << "is_completed: " << frame.is_completed << std::endl;
 
+            std::cout << "actual_input_date: " << frame.actual_input_date << std::endl;
+            std::cout << "actual_alternative_date: " << frame.actual_alternative_date << std::endl;
+
             std::cout << "\n\n";
         }
     }

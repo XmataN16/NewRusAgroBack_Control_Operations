@@ -70,12 +70,12 @@ InitialData::InitialData(const pqxx::result& rows)
         data.push_back(std::move(frame));
     }
 
-    index_map.reserve(data.size());
+    order_index_map.reserve(data.size());
     for (int i = 0; i < static_cast<int>(data.size()); ++i)
     {
         const InitialDataFrame& frame = data[i];
 
-        Key4 key
+        KeyOrder4 key
         {
             frame.culture_id,
             frame.region_id,
@@ -83,7 +83,7 @@ InitialData::InitialData(const pqxx::result& rows)
             frame.year
         };
 
-        if (index_map.find(key) != index_map.end())
+        if (order_index_map.find(key) != order_index_map.end())
         {
             throw std::runtime_error(
                 "Duplicate key detected: culture=" + std::to_string(frame.culture_id)
@@ -93,6 +93,26 @@ InitialData::InitialData(const pqxx::result& rows)
             );
         }
 
-        index_map.emplace(std::move(key), i);
+        order_index_map.emplace(std::move(key), i);
+
+        KeyCRTYS5 fullKey
+        {
+           frame.culture_id,
+           frame.region_id,
+           frame.t_material_id,
+           frame.year,
+           frame.season
+        };
+
+        if (CRTYS_index_map.find(fullKey) != CRTYS_index_map.end())
+        {
+            throw std::runtime_error("Duplicate full key detected: culture=" + std::to_string(fullKey.culture_id) +
+                ", region=" + std::to_string(fullKey.region_id) +
+                ", t_material_id=" + std::to_string(fullKey.t_material_id) +
+                ", year=" + std::to_string(fullKey.year))
+;
+        }
+
+        CRTYS_index_map.emplace(std::move(fullKey), i);
     }
 }

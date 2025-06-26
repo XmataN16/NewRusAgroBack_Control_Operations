@@ -66,9 +66,11 @@ void CalcActualDate(YearSlices& uniqueSlices, const YearSlices& fullSlices)
 
                         if (frame.calendar_day > max_date)
                             max_date = frame.calendar_day;
-                    }
 
-                    uniqueFrame.is_completed = ((sum_planned_volume * 0.8f) <= sum_actual_volume && sum_planned_volume != 0);
+                        uniqueFrame.is_completed = ((sum_planned_volume * 0.8f) <= sum_actual_volume && sum_planned_volume != 0);
+
+                        if (uniqueFrame.is_completed) break;
+                    }
 
                     if (!uniqueFrame.is_completed)
                         uniqueFrame.actual_date = std::nullopt;

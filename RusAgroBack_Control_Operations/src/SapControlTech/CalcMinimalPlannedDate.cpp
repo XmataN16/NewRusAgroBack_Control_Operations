@@ -18,7 +18,7 @@ void calcInputDate(InitialData& InitData, int row)
 {
 	if (InitData.data[row].input_operation_order.has_value() && InitData.data[row].input_deadline.has_value())
 	{
-		Key4 key
+		KeyOrder4 key
 		{
 	       InitData.data[row].culture_id,
 	       InitData.data[row].region_id,
@@ -26,8 +26,8 @@ void calcInputDate(InitialData& InitData, int row)
 	       InitData.data[row].year
 		};
 
-		auto it = InitData.index_map.find(key);
-		if (it != InitData.index_map.end())
+		auto it = InitData.order_index_map.find(key);
+		if (it != InitData.order_index_map.end())
 		{
 			int parent_row = it->second;
 			std::optional<boost::gregorian::date> InputDateTemp;
@@ -60,7 +60,7 @@ void calcAlternativeDate(InitialData& InitData, int row)
 {
 	if (InitData.data[row].alternative_operation_order.has_value() && InitData.data[row].alternative_deadline.has_value())
 	{
-		Key4 key
+		KeyOrder4 key
 		{
 		   InitData.data[row].culture_id,
 		   InitData.data[row].region_id,
@@ -68,8 +68,8 @@ void calcAlternativeDate(InitialData& InitData, int row)
 		   InitData.data[row].year
 		};
 
-		auto it = InitData.index_map.find(key);
-		if (it != InitData.index_map.end())
+		auto it = InitData.order_index_map.find(key);
+		if (it != InitData.order_index_map.end())
 		{
 			int parent_row = it->second;
 			std::optional<boost::gregorian::date> AlternativeDateTemp;

@@ -4,6 +4,7 @@
 #include "SapData.hpp"
 #include "CalcMinimalPlannedDate.hpp"
 #include "CalcActualDate.hpp"
+#include "CalcActualDateCompleteEntryOperation.hpp"
 
 int calcSapControlAggregated()
 {
@@ -32,7 +33,11 @@ int calcSapControlAggregated()
 
         CalcActualDate(sapDataUniqueTMaterialSlices, sapDataSlices);
 
-        printSlicesForYearAndTm(sapDataUniqueTMaterialSlices, 2024, "BL-04-03-16-0007");
+        calcInputDate(sapDataUniqueTMaterialSlices, initialData);
+
+        calcAlternativeDate(sapDataUniqueTMaterialSlices, initialData);
+
+        printSlicesForYearAndTm(sapDataUniqueTMaterialSlices, 2024, "PR-01-02-05-0057");
 
         //slices.at(2024).at("BL-04-03-16-0007").at()
 
