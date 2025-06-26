@@ -5,6 +5,8 @@
 #include "CalcMinimalPlannedDate.hpp"
 #include "CalcActualDate.hpp"
 #include "CalcActualDateCompleteEntryOperation.hpp"
+#include "CalcSawingDate.hpp"
+#include "CalcResawingDate.hpp"
 
 int calcSapControlAggregated()
 {
@@ -13,15 +15,21 @@ int calcSapControlAggregated()
         Database db("config/db_config.yml");
         db.connect();
 
-        // Выгрузка данных
+        // Выгрузка данных из таблицы static_initial_data
         pqxx::result rawInitData = db.fetchInitialDataRaw();
         InitialData initialData(rawInitData);
 
+        // Выгрузка данных из таблицы sap_control_operations
         pqxx::result rawSapDataAll = db.fetchSapControlOperationsRaw();
         SapData sapDataAll(rawSapDataAll);
 
+        // Получаем id операций с пересевами
         pqxx::result rawIDSReseeding = db.fetchSapIDSReseedingRaw();
         IDSReseeding idsReseeding(rawIDSReseeding);
+
+        // Получаем id операций с посевами
+        pqxx::result rawIDSSeeding = db.fetchSapIDSSeedingRaw();
+        IDSSeeding idsSeeding(rawIDSSeeding);
 
         calcMinimalPlannedDate(initialData);
 
@@ -31,18 +39,17 @@ int calcSapControlAggregated()
         // Создаем структуру в которой каждый срез содержит только записи с уникальными t_material на основе первого вхождения (уже sort по calendar_day)
         YearSlices sapDataUniqueTMaterialSlices = makeUniqueTMaterialSlices(sapDataSlices);
 
-        CalcActualDate(sapDataUniqueTMaterialSlices, sapDataSlices);
+        calcActualDate(sapDataUniqueTMaterialSlices, sapDataSlices);
 
         calcInputDate(sapDataUniqueTMaterialSlices, initialData);
 
         calcAlternativeDate(sapDataUniqueTMaterialSlices, initialData);
 
-        printSlicesForYearAndTm(sapDataUniqueTMaterialSlices, 2024, "PR-01-02-05-0057");
+        calcSawingDate(sapDataUniqueTMaterialSlices, idsSeeding);
 
-        //slices.at(2024).at("BL-04-03-16-0007").at()
+        calcResawingDate(sapDataUniqueTMaterialSlices, idsReseeding);
 
-        //InitData.Print();
-
+        printSlicesForYearAndTm(sapDataUniqueTMaterialSlices, 2024, "BL-04-03-16-0007");
     }
     catch (const std::exception& e)
     {

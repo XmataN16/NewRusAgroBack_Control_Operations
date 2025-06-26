@@ -167,6 +167,22 @@ pqxx::result Database::fetchSapControlOperationsRaw()
 	return result;
 }
 
+pqxx::result Database::fetchSapIDSSeedingRaw()
+{
+	pqxx::work txn(*conn_);
+
+	const std::string query = u8R"(
+       SELECT 
+       id 
+       FROM sap_operations_manual 
+       WHERE (operation_name = 'Посев с внесением удобрений (ГА)' OR operation_name = 'Посев без внесения удобрений (ГА)')
+    )";
+
+	pqxx::result result = txn.exec(query);
+	txn.commit();
+	return result;
+}
+
 pqxx::result Database::fetchSapIDSReseedingRaw()
 {
 	pqxx::work txn(*conn_);

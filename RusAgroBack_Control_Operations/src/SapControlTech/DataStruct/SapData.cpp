@@ -74,6 +74,27 @@ void IDSReseeding::Print()
     }
 }
 
+IDSSeeding::IDSSeeding(const pqxx::result& rows)
+{
+    for (const auto& row : rows)
+    {
+        IDs.push_back(std::move(row["id"].as<int>()));
+    }
+}
+
+int IDSSeeding::Size()
+{
+    return IDs.size();
+}
+
+void IDSSeeding::Print()
+{
+    for (const auto& row : IDs)
+    {
+        std::cout << "id: " << row << std::endl;
+    }
+}
+
 // –азделение данных по year -> higher_tm -> куски по правилу t_material_id = 421 и planned_volume != 0
 YearSlices sliceSapData(const std::vector<SapDataFrame>& data, const IDSReseeding& reseeding)
 {
@@ -178,10 +199,10 @@ void printSlicesForYearAndTm(const YearSlices& slices, int year, const std::stri
 
             std::cout << "actual_input_date: " << frame.actual_input_date << std::endl;
             std::cout << "actual_alternative_date: " << frame.actual_alternative_date << std::endl;
+            std::cout << "sawing_date: " << frame.sawing_date << std::endl;
+            std::cout << "resawing_date: " << frame.resawing_date << std::endl;
 
             std::cout << "\n\n";
         }
     }
 }
-
-

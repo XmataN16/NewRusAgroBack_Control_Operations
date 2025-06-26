@@ -7,7 +7,6 @@
 // Для удобства создаём индекс: t_material_id -> list of SapDataFrame (из полной выборки)
 using TMaterialIndex = std::unordered_map<int, std::vector<const SapDataFrame*>>;
 
-
 TMaterialIndex BuildTMaterialIndex(const YearSlices& fullSlices);
 
-void CalcActualDate(YearSlices& uniqueSlices, const YearSlices& fullSlices);
+void calcActualDate(YearSlices& uniqueSlices, const YearSlices& fullSlices);

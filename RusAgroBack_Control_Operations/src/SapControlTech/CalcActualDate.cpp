@@ -24,7 +24,7 @@ TMaterialIndex BuildTMaterialIndex(const YearSlices& fullSlices)
     return index;
 }
 
-void CalcActualDate(YearSlices& uniqueSlices, const YearSlices& fullSlices)
+void calcActualDate(YearSlices& uniqueSlices, const YearSlices& fullSlices)
 {
     int sum_planned_volume, sum_actual_volume;
 

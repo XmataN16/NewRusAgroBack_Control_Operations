@@ -22,6 +22,8 @@ struct SapDataFrame
 	bool is_completed;
 	std::optional<boost::gregorian::date> actual_input_date;
 	std::optional<boost::gregorian::date> actual_alternative_date;
+	std::optional<boost::gregorian::date> sawing_date;
+	std::optional<boost::gregorian::date> resawing_date;
 };
 
 struct SapData
@@ -42,6 +44,17 @@ struct IDSReseeding
 	std::vector<int> IDs;
 
 	explicit IDSReseeding(const pqxx::result& rows);
+
+	int Size();
+
+	void Print();
+};
+
+struct IDSSeeding
+{
+	std::vector<int> IDs;
+
+	explicit IDSSeeding(const pqxx::result& rows);
 
 	int Size();
 

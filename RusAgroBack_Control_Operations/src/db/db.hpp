@@ -23,6 +23,8 @@ public:
 
     pqxx::result fetchSapControlOperationsRaw();
 
+    pqxx::result fetchSapIDSSeedingRaw();
+
     pqxx::result fetchSapIDSReseedingRaw();
 
 private:
