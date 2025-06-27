@@ -175,7 +175,7 @@ pqxx::result Database::fetchSapIDSSeedingRaw()
        SELECT 
        id 
        FROM sap_operations_manual 
-       WHERE (operation_name = 'Посев с внесением удобрений (ГА)' OR operation_name = 'Посев без внесения удобрений (ГА)')
+       WHERE (operation_name ILIKE '%Посев с%' OR operation_name ILIKE '%Посев без%')
     )";
 
 	pqxx::result result = txn.exec(query);
@@ -191,7 +191,7 @@ pqxx::result Database::fetchSapIDSReseedingRaw()
        SELECT 
        id 
        FROM sap_operations_manual 
-       WHERE (operation_name = 'Пересев без внесения удобрений (ГА)' OR operation_name = 'Пересев с внесением удобрений (ГА)')
+       WHERE (operation_name ILIKE '%Пересев с%' OR operation_name ILIKE '%Пересев без%')
     )";
 
 	pqxx::result result = txn.exec(query);

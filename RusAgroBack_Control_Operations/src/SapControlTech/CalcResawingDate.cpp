@@ -9,30 +9,39 @@ void calcResawingDate(YearSlices& uniqueSlices, IDSReseeding idsReseeding)
     {
         for (auto& [higher_tm, sliceList] : tmMap)
         {
-            std::optional<boost::gregorian::date> lastResawingDate;
+            std::optional<boost::gregorian::date> lastZPDate;
+            std::optional<boost::gregorian::date> lastNZPDate;
 
-            // ѕроходим по всем срезам и запоминаем последнюю дату пересева
+            // »щем последние пересевы по всем срезам отдельно дл€ ZP и NZP
             for (const auto& slice : sliceList)
             {
                 for (auto it = slice.rbegin(); it != slice.rend(); ++it)
                 {
                     if (reseeding_ids.count(it->t_material_id))
                     {
-                        if (!lastResawingDate || it->actual_date > lastResawingDate)
+                        if (it->season == "ZP")
                         {
-                            lastResawingDate = it->actual_date;
+                            if (!lastZPDate || it->actual_date > lastZPDate)
+                                lastZPDate = it->actual_date;
                         }
-                        break; // только одна последн€€ из этого среза
+                        else if (it->season == "NZP")
+                        {
+                            if (!lastNZPDate || it->actual_date > lastNZPDate)
+                                lastNZPDate = it->actual_date;
+                        }
                     }
                 }
             }
 
-            // ѕроставл€ем найденную дату во все записи всех срезов
+            // ѕроставл€ем даты во все записи
             for (auto& slice : sliceList)
             {
                 for (auto& frame : slice)
                 {
-                    frame.resawing_date = lastResawingDate;
+                    if (frame.season == "ZP")
+                        frame.resawing_date = lastZPDate;
+                    else if (frame.season == "NZP")
+                        frame.resawing_date = lastNZPDate;
                 }
             }
         }

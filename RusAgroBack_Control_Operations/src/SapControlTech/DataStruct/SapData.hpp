@@ -19,11 +19,15 @@ struct SapDataFrame
 
 	// calc fields
 	std::optional<boost::gregorian::date> actual_date;
+	std::optional<boost::gregorian::date> start_date;
 	bool is_completed;
+	bool is_started;
 	std::optional<boost::gregorian::date> actual_input_date;
 	std::optional<boost::gregorian::date> actual_alternative_date;
 	std::optional<boost::gregorian::date> sawing_date;
 	std::optional<boost::gregorian::date> resawing_date;
+
+	
 };
 
 struct SapData

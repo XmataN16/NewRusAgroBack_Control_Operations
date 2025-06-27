@@ -26,7 +26,7 @@ TMaterialIndex BuildTMaterialIndex(const YearSlices& fullSlices)
 
 void calcActualDate(YearSlices& uniqueSlices, const YearSlices& fullSlices)
 {
-    int sum_planned_volume, sum_actual_volume;
+    int sumStartPlannedVolume, sumStartActualVolume, sumEndPlannedVolume, sumEndActualVolume;
 
     for (auto& [year, tmMap] : uniqueSlices)
     {
@@ -48,11 +48,17 @@ void calcActualDate(YearSlices& uniqueSlices, const YearSlices& fullSlices)
 
                 const auto& fullSlice = fullSliceList[i]; // тот же индекс среза
 
+                bool is_completed = false;
+                bool is_started = false;
+
                 for (auto& uniqueFrame : slice)
                 {
-                    sum_planned_volume = 0;
-                    sum_actual_volume = 0;
-                    boost::gregorian::date max_date(1999, 1, 1);
+                    sumStartPlannedVolume = 0;
+                    sumStartActualVolume = 0;
+                    sumEndPlannedVolume = 0;
+                    sumEndActualVolume = 0;
+                    boost::gregorian::date actualDate(1999, 1, 1);
+                    boost::gregorian::date startDate(1999, 1, 1);
 
                     int t_material_id = uniqueFrame.t_material_id;
 
@@ -61,13 +67,25 @@ void calcActualDate(YearSlices& uniqueSlices, const YearSlices& fullSlices)
                         if (frame.t_material_id != t_material_id)
                             continue;
 
-                        sum_planned_volume += frame.planned_volume;
-                        sum_actual_volume += frame.actual_volume;
+                        if (!is_started)
+                        {
+                            sumStartPlannedVolume += frame.planned_volume;
+                            sumStartActualVolume += frame.actual_volume;
+                            if (frame.calendar_day > startDate)
+                                startDate = frame.calendar_day;
 
-                        if (frame.calendar_day > max_date)
-                            max_date = frame.calendar_day;
+                            uniqueFrame.is_started = sumStartPlannedVolume * 0.1 <= sumStartActualVolume && sumStartPlannedVolume != 0 ? true : false;
+                        }
+                        
+                        if (!is_completed)
+                        {
+                            sumEndPlannedVolume += frame.planned_volume;
+                            sumEndActualVolume += frame.actual_volume;
+                            if (frame.calendar_day > actualDate)
+                                actualDate = frame.calendar_day;
 
-                        uniqueFrame.is_completed = ((sum_planned_volume * 0.8f) <= sum_actual_volume && sum_planned_volume != 0);
+                            uniqueFrame.is_completed = sumEndPlannedVolume * 0.8 <= sumEndActualVolume && sumEndPlannedVolume != 0 ? true : false;
+                        }
 
                         if (uniqueFrame.is_completed) break;
                     }
@@ -75,7 +93,12 @@ void calcActualDate(YearSlices& uniqueSlices, const YearSlices& fullSlices)
                     if (!uniqueFrame.is_completed)
                         uniqueFrame.actual_date = std::nullopt;
                     else
-                        uniqueFrame.actual_date = max_date;
+                        uniqueFrame.actual_date = actualDate;
+
+                    if (!uniqueFrame.is_started)
+                        uniqueFrame.start_date = std::nullopt;
+                    else
+                        uniqueFrame.start_date = startDate;
                 }
             }
         }
