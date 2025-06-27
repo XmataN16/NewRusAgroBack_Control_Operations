@@ -26,7 +26,7 @@ TMaterialIndex BuildTMaterialIndex(const YearSlices& fullSlices)
 
 void calcActualDate(YearSlices& uniqueSlices, const YearSlices& fullSlices)
 {
-    int sumStartPlannedVolume, sumStartActualVolume, sumEndPlannedVolume, sumEndActualVolume;
+    int sumStartPlannedVolume, sumStartActualVolume, sumEndPlannedVolume, sumEndActualVolume, is_completed, is_started;
 
     for (auto& [year, tmMap] : uniqueSlices)
     {
@@ -48,11 +48,11 @@ void calcActualDate(YearSlices& uniqueSlices, const YearSlices& fullSlices)
 
                 const auto& fullSlice = fullSliceList[i]; // тот же индекс среза
 
-                bool is_completed = false;
-                bool is_started = false;
-
                 for (auto& uniqueFrame : slice)
                 {
+                    is_completed = false;
+                    is_started = false;
+
                     sumStartPlannedVolume = 0;
                     sumStartActualVolume = 0;
                     sumEndPlannedVolume = 0;
@@ -71,10 +71,16 @@ void calcActualDate(YearSlices& uniqueSlices, const YearSlices& fullSlices)
                         {
                             sumStartPlannedVolume += frame.planned_volume;
                             sumStartActualVolume += frame.actual_volume;
+
                             if (frame.calendar_day > startDate)
                                 startDate = frame.calendar_day;
 
-                            uniqueFrame.is_started = sumStartPlannedVolume * 0.1 <= sumStartActualVolume && sumStartPlannedVolume != 0 ? true : false;
+                            is_started = sumStartPlannedVolume * 0.1 <= sumStartActualVolume && sumStartPlannedVolume != 0 ? true : false;
+
+                            if (frame.higher_tm == "BL-01-02-01-0009" && frame.year == 2024 && frame.t_material_id == 241)
+                            {
+                                std::cout << sumStartPlannedVolume << " " << sumStartActualVolume <<  " " << is_started << std::endl;
+                            }
                         }
                         
                         if (!is_completed)
@@ -84,18 +90,18 @@ void calcActualDate(YearSlices& uniqueSlices, const YearSlices& fullSlices)
                             if (frame.calendar_day > actualDate)
                                 actualDate = frame.calendar_day;
 
-                            uniqueFrame.is_completed = sumEndPlannedVolume * 0.8 <= sumEndActualVolume && sumEndPlannedVolume != 0 ? true : false;
+                            is_completed = sumEndPlannedVolume * 0.8 <= sumEndActualVolume && sumEndPlannedVolume != 0 ? true : false;
                         }
 
-                        if (uniqueFrame.is_completed) break;
+                        if (is_completed) break;
                     }
 
-                    if (!uniqueFrame.is_completed)
+                    if (!is_completed)
                         uniqueFrame.actual_date = std::nullopt;
                     else
                         uniqueFrame.actual_date = actualDate;
 
-                    if (!uniqueFrame.is_started)
+                    if (!is_started)
                         uniqueFrame.start_date = std::nullopt;
                     else
                         uniqueFrame.start_date = startDate;

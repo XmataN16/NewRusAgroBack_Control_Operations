@@ -49,7 +49,7 @@ int calcSapControlAggregated()
 
         calcResawingDate(sapDataUniqueTMaterialSlices, idsReseeding);
 
-        printSlicesForYearAndTm(sapDataUniqueTMaterialSlices, 2024, "OR-01-01-07-0004");
+        printSlicesForYearAndTm(sapDataUniqueTMaterialSlices, 2024, "BL-01-02-01-0009");
     }
     catch (const std::exception& e)
     {
