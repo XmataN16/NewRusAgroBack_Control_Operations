@@ -203,6 +203,9 @@ void printSlicesForYearAndTm(const YearSlices& slices, int year, const std::stri
             std::cout << "actual_alternative_date: " << frame.actual_alternative_date << std::endl;
             std::cout << "sawing_date: " << frame.sawing_date << std::endl;
             std::cout << "resawing_date: " << frame.resawing_date << std::endl;
+            std::cout << "status: " << frame.status << std::endl;
+            std::cout << "is_actual: " << frame.is_actual << std::endl;
+            std::cout << "minimal_date: " << frame.minimal_date << std::endl;
 
             std::cout << "\n\n";
         }

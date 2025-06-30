@@ -26,7 +26,9 @@ struct SapDataFrame
 	std::optional<boost::gregorian::date> actual_alternative_date;
 	std::optional<boost::gregorian::date> sawing_date;
 	std::optional<boost::gregorian::date> resawing_date;
-
+	std::optional<std::string> status;
+	std::optional<std::string> is_actual;
+	std::optional<boost::gregorian::date> minimal_date;
 	
 };
 

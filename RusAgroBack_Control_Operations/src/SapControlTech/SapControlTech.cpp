@@ -7,11 +7,15 @@
 #include "CalcActualDateCompleteEntryOperation.hpp"
 #include "CalcSawingDate.hpp"
 #include "CalcResawingDate.hpp"
+#include "CalcMinimalDate.hpp"
+#include <chrono>
 
 int calcSapControlAggregated()
 {
     try
     {
+        clock_t start = clock();
+
         Database db("config/db_config.yml");
         db.connect();
 
@@ -49,7 +53,15 @@ int calcSapControlAggregated()
 
         calcResawingDate(sapDataUniqueTMaterialSlices, idsReseeding);
 
-        printSlicesForYearAndTm(sapDataUniqueTMaterialSlices, 2024, "BL-01-02-01-0009");
+        calcMinimalDate(sapDataUniqueTMaterialSlices, initialData);
+
+        clock_t end = clock();
+
+        double seconds = (double)(end - start) / CLOCKS_PER_SEC;
+
+        std::cout << "The time: " << seconds << " seconds" << std::endl;
+
+        printSlicesForYearAndTm(sapDataUniqueTMaterialSlices, 2024, "BL-04-01-01-0004");
     }
     catch (const std::exception& e)
     {

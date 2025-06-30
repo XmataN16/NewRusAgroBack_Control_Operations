@@ -63,6 +63,9 @@
     <ClCompile Include="src\SapControlTech\CalcResawingDate.cpp">
       <Filter>Исходные файлы\SapControlTech</Filter>
     </ClCompile>
+    <ClCompile Include="src\SapControlTech\CalcMinimalDate.cpp">
+      <Filter>Исходные файлы\SapControlTech</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\db\db.hpp">
@@ -96,6 +99,9 @@
       <Filter>Исходные файлы\SapControlTech</Filter>
     </ClInclude>
     <ClInclude Include="src\SapControlTech\CalcResawingDate.hpp">
+      <Filter>Исходные файлы\SapControlTech</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SapControlTech\CalcMinimalDate.hpp">
       <Filter>Исходные файлы\SapControlTech</Filter>
     </ClInclude>
   </ItemGroup>

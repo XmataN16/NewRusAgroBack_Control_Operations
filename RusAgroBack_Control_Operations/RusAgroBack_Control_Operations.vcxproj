@@ -121,6 +121,8 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>C:\Users\XmataN16\source\repos\RusAgroBack_Control_Operations\RusAgroBack_Control_Operations\src\db;C:\Users\XmataN16\source\repos\RusAgroBack_Control_Operations\RusAgroBack_Control_Operations\src\SapControlTech\DataStruct;C:\Users\XmataN16\source\repos\RusAgroBack_Control_Operations\RusAgroBack_Control_Operations\src\SapControlTech;C:\Users\XmataN16\source\repos\RusAgroBack_Control_Operations\RusAgroBack_Control_Operations\src\utils;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -134,6 +136,7 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\SapControlTech\CalcActualDate.cpp" />
     <ClCompile Include="src\SapControlTech\CalcActualDateCompleteEntryOperation.cpp" />
+    <ClCompile Include="src\SapControlTech\CalcMinimalDate.cpp" />
     <ClCompile Include="src\SapControlTech\CalcMinimalPlannedDate.cpp" />
     <ClCompile Include="src\SapControlTech\CalcResawingDate.cpp" />
     <ClCompile Include="src\SapControlTech\CalcSawingDate.cpp" />
@@ -147,6 +150,7 @@
     <ClInclude Include="src\db\db.hpp" />
     <ClInclude Include="src\SapControlTech\CalcActualDate.hpp" />
     <ClInclude Include="src\SapControlTech\CalcActualDateCompleteEntryOperation.hpp" />
+    <ClInclude Include="src\SapControlTech\CalcMinimalDate.hpp" />
     <ClInclude Include="src\SapControlTech\CalcMinimalPlannedDate.hpp" />
     <ClInclude Include="src\SapControlTech\CalcResawingDate.hpp" />
     <ClInclude Include="src\SapControlTech\CalcSawingDate.hpp" />
