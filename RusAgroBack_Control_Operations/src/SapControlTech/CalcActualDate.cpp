@@ -76,11 +76,6 @@ void calcActualDate(YearSlices& uniqueSlices, const YearSlices& fullSlices)
                                 startDate = frame.calendar_day;
 
                             is_started = sumStartPlannedVolume * 0.1 <= sumStartActualVolume && sumStartPlannedVolume != 0 ? true : false;
-
-                            if (frame.higher_tm == "BL-01-02-01-0009" && frame.year == 2024 && frame.t_material_id == 241)
-                            {
-                                std::cout << sumStartPlannedVolume << " " << sumStartActualVolume <<  " " << is_started << std::endl;
-                            }
                         }
                         
                         if (!is_completed)

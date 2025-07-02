@@ -57,3 +57,4 @@ std::optional<boost::gregorian::date> min_date(const std::optional<boost::gregor
 
     return *std::min_element(valid_dates.begin(), valid_dates.end());
 }
+

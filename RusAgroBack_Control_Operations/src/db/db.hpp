@@ -1,4 +1,8 @@
 #pragma once
+#include "SapData.hpp"
+#include "utilsBoostDate.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
+#include <optional>
 #include <string>
 #include <memory>
 #include <pqxx/pqxx>
@@ -26,6 +30,10 @@ public:
     pqxx::result fetchSapIDSSeedingRaw();
 
     pqxx::result fetchSapIDSReseedingRaw();
+
+    void insertIntoControlOperationsAggregated(const YearSlices& uniqueSlices);
+
+    void truncateAndRestartIdentity(std::string table_name);
 
 private:
     std::string host_;

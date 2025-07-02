@@ -2,7 +2,7 @@
 
 #include <iostream>     
 #include <sstream>      
-#include <stdexcept>    
+#include <stdexcept>
 
 Database::Database(const std::string& config_file)
 	: port_(0)
@@ -197,5 +197,132 @@ pqxx::result Database::fetchSapIDSReseedingRaw()
 	pqxx::result result = txn.exec(query);
 	txn.commit();
 	return result;
+}
+
+void Database::insertIntoControlOperationsAggregated(const YearSlices& uniqueSlices)
+{
+	pqxx::work txn(*conn_);
+	try
+	{
+		// Подготовка SQL-запроса с параметрами
+		const std::string query = R"(
+            INSERT INTO control_operations_aggregated (
+                culture_id, region_id, t_material_id, pu_id, higher_tm, season, calendar_day, year,
+                actual_date, start_date, is_completed, is_started, sawing_date, resawing_date,
+                status, is_actual, minimal_date
+            ) VALUES (
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17
+            )
+        )";
+
+		// Обход всех записей в YearSlices
+		for (const auto& [year, higherTmMap] : uniqueSlices) 
+		{
+			for (const auto& [higherTm, materialSlices] : higherTmMap) 
+			{
+				for (const auto& slice : materialSlices) 
+				{
+					for (const auto& frame : slice) 
+					{
+						pqxx::params params;
+
+						// Добавление обязательных полей
+						params.append(frame.culture_id);
+						params.append(frame.region_id);
+						params.append(frame.t_material_id);
+						params.append(frame.pu_id);
+						params.append(higherTm);
+						params.append(frame.season);
+						params.append(to_iso_string(frame.calendar_day));
+						params.append(year);
+
+						// Добавление опциональных полей
+						if (frame.actual_date.has_value())
+						{
+							params.append(to_iso_string(*frame.actual_date));
+						}
+						else
+						{
+							params.append(std::nullopt);
+						}
+						if (frame.start_date.has_value())
+						{
+							params.append(to_iso_string(*frame.start_date));
+						}
+						else
+						{
+							params.append(std::nullopt);
+						}
+
+						params.append(frame.is_completed);
+						params.append(frame.is_started);
+
+						if (frame.sawing_date.has_value())
+						{
+							params.append(to_iso_string(*frame.sawing_date));
+						}
+						else
+						{
+							params.append(std::nullopt);
+						}
+						if (frame.resawing_date.has_value())
+						{
+							params.append(to_iso_string(*frame.resawing_date));
+						}
+						else
+						{
+							params.append(std::nullopt);
+						}
+						if (frame.status.has_value())
+						{
+							params.append(frame.status);
+						}
+						else
+						{
+							params.append(std::nullopt);
+						}
+						if (frame.is_actual.has_value())
+						{
+							params.append(frame.is_actual);
+						}
+						else
+						{
+							params.append(std::nullopt);
+						}
+						if (frame.minimal_date.has_value())
+						{
+							params.append(to_iso_string(*frame.minimal_date));
+						}
+						else
+						{
+							params.append(std::nullopt);
+						}
+
+						// Выполнение вставки
+						txn.exec(query, params);
+					}
+				}
+			}
+		}
+
+		// Подтверждение транзакции
+		txn.commit();
+	}
+	catch (const std::exception& e)
+	{
+		// Откат в случае ошибки
+		txn.abort();
+		throw; // Перебрасываем исключение для обработки на верхнем уровне
+	}
+}
+
+void Database::truncateAndRestartIdentity(std::string table_name)
+{
+	pqxx::work txn(*conn_);
+
+	const std::string query = u8R"(TRUNCATE TABLE )" + table_name + u8R"( RESTART IDENTITY)";
+
+	txn.exec(query);
+	txn.commit();
 }
 

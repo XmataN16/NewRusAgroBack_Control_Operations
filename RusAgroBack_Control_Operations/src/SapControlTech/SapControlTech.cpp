@@ -14,8 +14,6 @@ int calcSapControlAggregated()
 {
     try
     {
-        clock_t start = clock();
-
         Database db("config/db_config.yml");
         db.connect();
 
@@ -34,6 +32,8 @@ int calcSapControlAggregated()
         // Получаем id операций с посевами
         pqxx::result rawIDSSeeding = db.fetchSapIDSSeedingRaw();
         IDSSeeding idsSeeding(rawIDSSeeding);
+
+        clock_t start = clock();
 
         calcMinimalPlannedDate(initialData);
 
@@ -59,9 +59,13 @@ int calcSapControlAggregated()
 
         double seconds = (double)(end - start) / CLOCKS_PER_SEC;
 
-        std::cout << "The time: " << seconds << " seconds" << std::endl;
+        std::cout << "Calc time: " << seconds << " seconds" << std::endl;
 
-        printSlicesForYearAndTm(sapDataUniqueTMaterialSlices, 2024, "BL-04-01-01-0004");
+        db.truncateAndRestartIdentity("control_operations_aggregated");
+
+        db.insertIntoControlOperationsAggregated(sapDataUniqueTMaterialSlices);
+
+        //printSlicesForYearAndTm(sapDataUniqueTMaterialSlices, 2024, "BL-04-01-01-0004");
     }
     catch (const std::exception& e)
     {
