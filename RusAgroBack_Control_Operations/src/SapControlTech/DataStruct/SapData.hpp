@@ -29,7 +29,7 @@ struct SapDataFrame
 	std::optional<std::string> status;
 	std::optional<std::string> is_actual;
 	std::optional<boost::gregorian::date> minimal_date;
-	
+	std::optional<int> order;
 };
 
 struct SapData

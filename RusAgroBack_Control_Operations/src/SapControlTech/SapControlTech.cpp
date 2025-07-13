@@ -61,7 +61,7 @@ int calcSapControlAggregated()
 
         std::cout << "Calc time: " << seconds << " seconds" << std::endl;
 
-        db.truncateAndRestartIdentity("control_operations_aggregated");
+        db.truncateAndRestartIdentity("control_operations_aggregated_new");
 
         db.insertIntoControlOperationsAggregated(sapDataUniqueTMaterialSlices);
 

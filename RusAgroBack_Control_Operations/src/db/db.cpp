@@ -135,7 +135,7 @@ pqxx::result Database::fetchInitialDataRaw()
             noinput_deadline,
             "order",
             year
-        FROM static_initial_data ORDER BY "order" ASC, culture_id ASC, region_id ASC
+        FROM static_initial_data_control_operations ORDER BY "order" ASC, culture_id ASC, region_id ASC
     )";
 
 	pqxx::result result = txn.exec(query);
@@ -159,7 +159,7 @@ pqxx::result Database::fetchSapControlOperationsRaw()
             planned_volume,
             actual_volume,
             year
-        FROM sap_control_operations ORDER BY calendar_day, id
+        FROM sap_control_operations_source ORDER BY calendar_day, id
     )";
 
 	pqxx::result result = txn.exec(query);
@@ -174,7 +174,7 @@ pqxx::result Database::fetchSapIDSSeedingRaw()
 	const std::string query = u8R"(
        SELECT 
        id 
-       FROM sap_operations_manual 
+       FROM sap_operations 
        WHERE (operation_name ILIKE '%Посев с%' OR operation_name ILIKE '%Посев без%')
     )";
 
@@ -190,7 +190,7 @@ pqxx::result Database::fetchSapIDSReseedingRaw()
 	const std::string query = u8R"(
        SELECT 
        id 
-       FROM sap_operations_manual 
+       FROM sap_operations 
        WHERE (operation_name ILIKE '%Пересев с%' OR operation_name ILIKE '%Пересев без%')
     )";
 
@@ -206,12 +206,12 @@ void Database::insertIntoControlOperationsAggregated(const YearSlices& uniqueSli
 	{
 		// Подготовка SQL-запроса с параметрами
 		const std::string query = R"(
-            INSERT INTO control_operations_aggregated (
+            INSERT INTO control_operations_aggregated_new (
                 culture_id, region_id, t_material_id, pu_id, higher_tm, season, calendar_day, year,
                 actual_date, start_date, is_completed, is_started, sawing_date, resawing_date,
-                status, is_actual, minimal_date
+                status, is_actual, minimal_date, "order"
             ) VALUES (
-                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17
+                $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18
             )
         )";
 
@@ -292,6 +292,14 @@ void Database::insertIntoControlOperationsAggregated(const YearSlices& uniqueSli
 						if (frame.minimal_date.has_value())
 						{
 							params.append(to_iso_string(*frame.minimal_date));
+						}
+						else
+						{
+							params.append(std::nullopt);
+						}
+						if (frame.order.has_value())
+						{
+							params.append(*frame.order);
 						}
 						else
 						{

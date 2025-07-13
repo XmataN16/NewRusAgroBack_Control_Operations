@@ -91,6 +91,9 @@ void calcActualDate(YearSlices& uniqueSlices, const YearSlices& fullSlices)
                         if (is_completed) break;
                     }
 
+                    uniqueFrame.is_completed = is_completed;
+                    uniqueFrame.is_started = is_started;
+
                     if (!is_completed)
                         uniqueFrame.actual_date = std::nullopt;
                     else

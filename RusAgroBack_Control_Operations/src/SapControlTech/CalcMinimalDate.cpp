@@ -70,6 +70,8 @@ void calcMinimalDate(YearSlices& uniqueSlices, const InitialData& initData)
 
                     const InitialDataFrame& initFrame = initData.data[it->second];
 
+                    frame.order = initFrame.order;
+
                     // Вычисление min_plan_date
                     std::optional<date> min_plan_date;
                     if (initFrame.input_operation_order.has_value()) 
