@@ -33,7 +33,7 @@ int calcSapControlAggregated()
         pqxx::result rawIDSSeeding = db.fetchSapIDSSeedingRaw();
         IDSSeeding idsSeeding(rawIDSSeeding);
 
-        clock_t start = clock();
+        clock_t calc_start = clock();
 
         calcMinimalPlannedDate(initialData);
 
@@ -55,15 +55,23 @@ int calcSapControlAggregated()
 
         calcMinimalDate(sapDataUniqueTMaterialSlices, initialData);
 
-        clock_t end = clock();
+        clock_t calc_end = clock();
 
-        double seconds = (double)(end - start) / CLOCKS_PER_SEC;
+        double calc_seconds = (double)(calc_end - calc_start) / CLOCKS_PER_SEC;
 
-        std::cout << "Calc time: " << seconds << " seconds" << std::endl;
+        std::cout << "Calc time: " << calc_seconds << " seconds" << std::endl;
+
+        clock_t uploading_start = clock();
 
         db.truncateAndRestartIdentity("control_operations_aggregated_new");
 
         db.insertIntoControlOperationsAggregated(sapDataUniqueTMaterialSlices);
+
+        clock_t uploading_end = clock();
+
+        double uploading_seconds = (double)(uploading_end - uploading_start) / CLOCKS_PER_SEC;
+
+        std::cout << "Unloading data into PostgreSQL: " << uploading_seconds << " seconds" << std::endl;
 
         //printSlicesForYearAndTm(sapDataUniqueTMaterialSlices, 2024, "BL-04-01-01-0004");
     }
