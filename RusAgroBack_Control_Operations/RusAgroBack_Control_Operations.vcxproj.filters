@@ -25,6 +25,9 @@
     <Filter Include="Исходные файлы\utils">
       <UniqueIdentifier>{eb6587d3-b4f1-4889-bd65-467b38776cf4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Исходные файлы\SapSugarBeetSawingDates">
+      <UniqueIdentifier>{7c05cddc-067f-4a41-8007-7cf128bfd226}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -66,6 +69,9 @@
     <ClCompile Include="src\SapControlTech\CalcMinimalDate.cpp">
       <Filter>Исходные файлы\SapControlTech</Filter>
     </ClCompile>
+    <ClCompile Include="src\SapSugarBeetSawingDates\SapSugarBeetSawingDates.cpp">
+      <Filter>Исходные файлы\SapSugarBeetSawingDates</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\db\db.hpp">
@@ -103,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="src\SapControlTech\CalcMinimalDate.hpp">
       <Filter>Исходные файлы\SapControlTech</Filter>
+    </ClInclude>
+    <ClInclude Include="src\SapSugarBeetSawingDates\SapSugarBeetSawingDates.hpp">
+      <Filter>Исходные файлы\SapSugarBeetSawingDates</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

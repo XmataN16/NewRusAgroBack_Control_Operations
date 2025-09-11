@@ -167,6 +167,30 @@ pqxx::result Database::fetchSapControlOperationsRaw()
 	return result;
 }
 
+pqxx::result Database::fetchSapSugarBeetSawingDatesOpsRaw()
+{
+	pqxx::work txn(*conn_);
+
+	const std::string query = R"(
+        SELECT 
+            culture_id,
+            region_id,
+            t_material_id,
+            pu_id,
+            higher_tm,
+            season,
+            calendar_day,
+            planned_volume,
+            actual_volume,
+            year
+        FROM sap_sugar_beet_sawing_dates_ops_source ORDER BY calendar_day, id
+    )";
+
+	pqxx::result result = txn.exec(query);
+	txn.commit();
+	return result;
+}
+
 pqxx::result Database::fetchSapIDSSeedingRaw()
 {
 	pqxx::work txn(*conn_);
@@ -323,6 +347,58 @@ void Database::insertIntoControlOperationsAggregated(const YearSlices& uniqueSli
 		throw; // Перебрасываем исключение для обработки на верхнем уровне
 	}
 }
+
+void Database::insertIntoSapSugarBeetSawingDates(const YearSlices& uniqueSlices)
+{
+	pqxx::work txn(*conn_);
+	try
+	{
+		const std::string query = R"(
+            INSERT INTO sap_sugar_beet_sawing_dates
+                (culture_id, pu_id, higher_tm, year, sawing_date)
+            VALUES ($1, $2, $3, $4, $5)
+        )";
+
+		// Обход YearSlices -> map<year, map<higher_tm, vector<vector<Frame>>>>
+		for (const auto& [year, higherTmMap] : uniqueSlices)
+		{
+			for (const auto& [higherTm, materialSlices] : higherTmMap)
+			{
+				for (const auto& slice : materialSlices)
+				{
+					for (const auto& frame : slice)
+					{
+						pqxx::params params;
+
+						params.append(frame.culture_id);
+						params.append(frame.pu_id);
+						params.append(higherTm);  // строка
+						params.append(year);
+
+						if (frame.sawing_date.has_value())
+						{
+							params.append(to_iso_string(*frame.sawing_date));
+						}
+						else
+						{
+							params.append(std::nullopt);
+						}
+
+						txn.exec(query, params);
+					}
+				}
+			}
+		}
+
+		txn.commit();
+	}
+	catch (const std::exception& e)
+	{
+		txn.abort();
+		throw; // пробрасываем выше
+	}
+}
+
 
 void Database::truncateAndRestartIdentity(std::string table_name)
 {

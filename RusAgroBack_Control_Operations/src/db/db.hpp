@@ -27,11 +27,15 @@ public:
 
     pqxx::result fetchSapControlOperationsRaw();
 
+    pqxx::result fetchSapSugarBeetSawingDatesOpsRaw();
+
     pqxx::result fetchSapIDSSeedingRaw();
 
     pqxx::result fetchSapIDSReseedingRaw();
 
     void insertIntoControlOperationsAggregated(const YearSlices& uniqueSlices);
+
+    void insertIntoSapSugarBeetSawingDates(const YearSlices& uniqueSlices);
 
     void truncateAndRestartIdentity(std::string table_name);
 
