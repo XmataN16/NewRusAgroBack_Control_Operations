@@ -134,14 +134,14 @@ void calcAlternativeDate(YearSlices& uniqueSlices, const InitialData& initData)
 
                     const InitialDataFrame& matchInitData = initData.data[it->second];
 
-                    // �������� ������� input_operation_order
+                    // Проверка наличия input_operation_order
                     if (!matchInitData.input_operation_order.has_value())
                     {
                         frame.actual_alternative_date = std::nullopt;
                         continue;
                     }
 
-                    // ���� ������������ ������ �� input_operation_order
+                    // Ищем родительскую запись по input_operation_order
                     KeyOrder4 parentKey
                     {
                         matchInitData.culture_id,
@@ -159,7 +159,7 @@ void calcAlternativeDate(YearSlices& uniqueSlices, const InitialData& initData)
 
                     const InitialDataFrame& parentInitData = initData.data[parentIt->second];
 
-                    // ������ ���� actual_date �� CRTYS �� parentInitData
+                    // Теперь ищем actual_date по CRTYS из parentInitData
                     KeyCRTYS5 parentCRTYSKey
                     {
                         parentInitData.culture_id,
@@ -176,7 +176,7 @@ void calcAlternativeDate(YearSlices& uniqueSlices, const InitialData& initData)
                         continue;
                     }
 
-                    // actual_date �� ���� �� uniqueSlices
+                    // actual_date мы берём из uniqueSlices
                     auto& parentFrame = uniqueSlices[year][higher_tm];
 
                     std::optional<boost::gregorian::date> actual_date;
@@ -197,7 +197,7 @@ void calcAlternativeDate(YearSlices& uniqueSlices, const InitialData& initData)
                         if (actual_date.has_value()) break;
                     }
 
-                    // ��������� actual_alternative_date
+                    // Вычисляем actual_alternative_date
                     if (actual_date.has_value() && matchInitData.alternative_deadline.has_value())
                     {
                         frame.actual_alternative_date = actual_date.value() + boost::gregorian::days(matchInitData.alternative_deadline.value());
